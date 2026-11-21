@@ -19,7 +19,7 @@ class AuditLogController extends Controller
             'resource' => ['nullable', 'string', 'max:60'],
             'from' => ['nullable', 'date'],
             'to' => ['nullable', 'date'],
-            'limit' => ['nullable', 'integer', 'min:1', 'max:200'],
+            'page' => ['nullable', 'integer', 'min:1'],
         ])->validate();
 
         $query = AuditLog::query()->orderByDesc('created_at');
@@ -51,9 +51,17 @@ class AuditLogController extends Controller
             $query->where('created_at', '<=', $request->query('to').' 23:59:59');
         }
 
-        $limit = (int) $request->input('limit', 100);
+        return AuditLogResource::collection($query->paginate(20)->withQueryString());
+    }
 
-        return AuditLogResource::collection($query->limit($limit)->get());
+    // Lists the distinct days (YYYY-MM-DD) that have audit entries, newest first.
+    public function dates()
+    {
+        return AuditLog::query()
+            ->selectRaw('date(created_at) as day')
+            ->distinct()
+            ->orderByDesc('day')
+            ->pluck('day');
     }
 
     // Returns one audit entry with its before/after values.

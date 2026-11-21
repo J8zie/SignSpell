@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { ConfirmService } from '../../core/confirm.service';
 import { fullName, Role } from '../../core/models';
 import { ROLE_LABEL } from '../../core/permissions';
 import { Slider } from '../../shared/slider';
@@ -47,6 +48,7 @@ const NAV: Record<Role, NavItem[]> = {
 })
 export class Shell {
   readonly auth = inject(AuthService);
+  private readonly confirm = inject(ConfirmService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   /** Whether the account menu is open. */
@@ -69,4 +71,11 @@ export class Shell {
   @HostListener('document:keydown.escape')
   // Closes the account menu on Escape.
   esc(): void { this.menu.set(false); }
+  // Asks first, then signs out and closes the menu.
+  async logout(): Promise<void> {
+    const ok = await this.confirm.ask({ title: 'Log out?', message: 'You will need to sign in again to continue.', confirmLabel: 'Log out' });
+    if (!ok) return;
+    this.menu.set(false);
+    await this.auth.logout();
+  }
 }

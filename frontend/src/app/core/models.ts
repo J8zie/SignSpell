@@ -67,7 +67,9 @@ export interface AuditLog {
   description: string | null; oldValues: Record<string, unknown> | null; newValues: Record<string, unknown> | null;
   ipAddress: string | null; userAgent: string | null; createdAt: string;
 }
-export interface AuditQuery { q?: string; user?: string; role?: Role; action?: string; resource?: string; from?: string; to?: string; limit?: number; }
+export interface AuditQuery { q?: string; user?: string; role?: Role; action?: string; resource?: string; from?: string; to?: string; page?: number; }
+/** One page of a paginated list, flattened from the API's paginator meta. */
+export interface Page<T> { items: T[]; page: number; pages: number; total: number; }
 
 /** Landmark points extracted on the device: each frame is 21 (one hand) or 42 (two hands) {x,y,z} points. */
 export interface LandmarkPoint { x: number; y: number; z: number; }

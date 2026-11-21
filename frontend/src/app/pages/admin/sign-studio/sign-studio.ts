@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, HostListener, OnDestroy, OnInit, co
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Api, ApiError } from '../../../core/api/api';
+import { ConfirmService } from '../../../core/confirm.service';
 import { Account, Sign, SignType, fullName } from '../../../core/models';
 import { ToastService } from '../../../core/toast.service';
 import { HasUnsavedChanges } from '../../../core/unsaved.guard';
@@ -40,6 +41,7 @@ export class SignStudio implements OnInit, OnDestroy, HasUnsavedChanges {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly confirm = inject(ConfirmService);
   private readonly hints = inject(HintRepository);
   private readonly lessonMedia = inject(LessonMediaRepository);
   private readonly picker = viewChild(ImagePicker);
@@ -183,6 +185,12 @@ export class SignStudio implements OnInit, OnDestroy, HasUnsavedChanges {
     if (!hasPicture) this.imageError.set(letter ? 'Choose a picture of the sign.' : 'Add at least one picture. The first one is the start picture.');
     this.form.markAllAsTouched();
     if (problem || !hasPicture) return;
+
+    const existing = this.original();
+    if (existing) {
+      const ok = await this.confirm.ask({ title: 'Update this sign?', message: `Save your changes to “${existing.label}”?`, confirmLabel: 'Update' });
+      if (!ok) return;
+    }
 
     this.busy.set(true);
     try {

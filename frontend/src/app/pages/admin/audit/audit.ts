@@ -21,37 +21,69 @@ export class Audit implements OnInit {
   private readonly toast = inject(ToastService);
   readonly logs = signal<AuditLog[]>([]);
   readonly loading = signal(true);
+  readonly page = signal(1);
+  readonly pages = signal(1);
+  readonly total = signal(0);
   readonly q = signal('');
   readonly role = signal<'' | Role>('');
   readonly action = signal('');
   readonly resource = signal('');
-  readonly from = signal('');
-  readonly to = signal('');
+  readonly day = signal('');
+  readonly dates = signal<string[]>([]);
   readonly selected = signal<AuditLog | null>(null);
   readonly roleLabel = ROLE_LABEL;
   private timer = 0;
 
-  readonly actions = ['LOGIN', 'LOGOUT', 'CREATE', 'UPDATE', 'DELETE', 'DONATE', 'APPROVE', 'REJECT', 'ASSIGN', 'RESTORE', 'PASSWORD_CHANGE', 'ACCOUNT_STATUS', 'ROLE_CHANGE'];
+  // Real action names written by the API's Audit service.
+  readonly actions = [
+    'auth.login', 'auth.login_failed', 'auth.logout', 'auth.register',
+    'profile.password_change', 'profile.update',
+    'account.create', 'account.update', 'account.delete',
+    'sign.create', 'sign.update', 'sign.delete',
+    'sign.hint_update', 'sign.hint_delete', 'sign.media_update', 'sign.media_delete', 'sign.media_analyze', 'sign.sample_add',
+  ];
   readonly roles: ('' | Role)[] = ['', 'learner', 'teacher', 'admin', 'super_admin'];
 
-  // Loads the latest audit entries.
-  async ngOnInit(): Promise<void> { await this.load(); }
+  // Colour tone for the action chip: destructive, good, or warning.
+  tone(action: string): 'del' | 'ok' | 'warn' | '' {
+    if (action.includes('delete') || action.includes('login_failed')) return 'del';
+    if (action.includes('approve') || action.includes('restore')) return 'ok';
+    if (action.includes('reject')) return 'warn';
+    return '';
+  }
 
-  // Fetches audit entries matching the current filters.
+  // Loads the days that have entries, then the latest audit entries.
+  async ngOnInit(): Promise<void> {
+    try { this.dates.set(await this.api.listAuditDates()); } catch { /* the date filter is a bonus: the list still works */ }
+    await this.load();
+  }
+
+  // Fetches the current page of audit entries matching the filters.
   async load(): Promise<void> {
     this.loading.set(true);
     try {
-      this.logs.set(await this.api.listAuditLogs({
+      const res = await this.api.listAuditLogs({
         q: this.q().trim() || undefined, role: this.role() || undefined, action: this.action() || undefined,
-        resource: this.resource().trim() || undefined, from: this.from() || undefined, to: this.to() || undefined, limit: 200,
-      }));
+        resource: this.resource().trim() || undefined, from: this.day() || undefined, to: this.day() || undefined,
+        page: this.page(),
+      });
+      this.logs.set(res.items);
+      this.page.set(res.page);
+      this.pages.set(res.pages);
+      this.total.set(res.total);
     } catch (e) { this.toast.error((e as Error).message); }
     finally { this.loading.set(false); }
   }
-  // Debounces the search box and reloads.
-  search(v: string): void { this.q.set(v); clearTimeout(this.timer); this.timer = window.setTimeout(() => void this.load(), 300); }
-  // Reloads after a filter changes.
-  apply(): void { void this.load(); }
+  // Debounces the search box and reloads from the first page.
+  search(v: string): void { this.q.set(v); clearTimeout(this.timer); this.timer = window.setTimeout(() => this.apply(), 300); }
+  // Reloads from the first page after a filter changes.
+  apply(): void { this.page.set(1); void this.load(); }
+  // Goes to another page of results.
+  goToPage(p: number): void {
+    if (p < 1 || p > this.pages() || p === this.page()) return;
+    this.page.set(p);
+    void this.load();
+  }
   // Opens the detail view for one entry.
   show(l: AuditLog): void { this.selected.set(l); }
 }

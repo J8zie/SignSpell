@@ -3,7 +3,7 @@
     <div>
       <p class="eyebrow">Super admin</p>
       <h1>Audit logs</h1>
-      <p class="summary">Every important action in the system · <b>{{ logs().length }}</b> shown · read-only</p>
+      <p class="summary">Every important action in the system · <b>{{ total() }}</b> entries · read-only</p>
     </div>
   </header>
 
@@ -20,10 +20,11 @@
     </select>
     <label class="sr" for="ar">Filter by resource</label>
     <input id="ar" class="input" type="search" placeholder="Resource (e.g. user, sign)" [value]="resource()" (change)="resource.set($any($event.target).value); apply()" autocomplete="off">
-    <label class="sr" for="af">From date</label>
-    <input id="af" class="input" type="date" aria-label="From date" [value]="from()" (change)="from.set($any($event.target).value); apply()">
-    <label class="sr" for="at">To date</label>
-    <input id="at" class="input" type="date" aria-label="To date" [value]="to()" (change)="to.set($any($event.target).value); apply()">
+    <label class="sr" for="ad">Filter by date</label>
+    <select id="ad" class="input" aria-label="Filter by date" [value]="day()" (change)="day.set($any($event.target).value); apply()">
+      <option value="">All dates</option>
+      @for (d of dates(); track d) { <option [value]="d">{{ d + 'T00:00:00' | date: 'MMM d, y' }}</option> }
+    </select>
   </div>
 
   @if (loading()) {
@@ -32,24 +33,31 @@
     <div class="empty"><p class="big">No audit entries match.</p><p>Try widening the filters.</p></div>
   } @else {
     <div class="table-wrap">
-      <table class="table">
+      <table>
         <thead>
           <tr><th>When</th><th>User</th><th>Role</th><th>Action</th><th>Resource</th><th>Description</th></tr>
         </thead>
         <tbody>
           @for (l of logs(); track l.auditId) {
-            <tr class="row" (click)="show(l)" tabindex="0" (keydown.enter)="show(l)">
+            <tr class="log-row" (click)="show(l)" tabindex="0" (keydown.enter)="show(l)">
               <td class="nowrap">{{ l.createdAt | date: 'MMM d, y HH:mm' }}</td>
               <td>{{ l.username ?? '—' }}</td>
               <td>{{ l.userRole ? roleLabel[l.userRole] : '—' }}</td>
-              <td><span class="tag" [class.del]="l.action === 'DELETE'">{{ l.action }}</span></td>
+              <td><span class="tag" [class.del]="tone(l.action) === 'del'" [class.ok]="tone(l.action) === 'ok'" [class.warn]="tone(l.action) === 'warn'">{{ l.action }}</span></td>
               <td>{{ l.resourceType ?? '—' }}@if (l.resourceId) { <span class="muted small"> #{{ l.resourceId }}</span> }</td>
-              <td class="desc">{{ l.description ?? '—' }}</td>
+              <td class="desc" [title]="l.description ?? ''">{{ l.description ?? '—' }}</td>
             </tr>
           }
         </tbody>
       </table>
     </div>
+    @if (pages() > 1) {
+      <nav class="pager" aria-label="Audit log pages">
+        <button class="btn ghost sm" type="button" [disabled]="page() <= 1 || loading()" (click)="goToPage(page() - 1)">Previous</button>
+        <span class="pager-info">Page {{ page() }} of {{ pages() }}</span>
+        <button class="btn ghost sm" type="button" [disabled]="page() >= pages() || loading()" (click)="goToPage(page() + 1)">Next</button>
+      </nav>
+    }
   }
 </div>
 

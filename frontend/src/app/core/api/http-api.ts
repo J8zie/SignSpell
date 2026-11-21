@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 import {
   Account, AccountInput, Attempt, AttemptInput, AttemptQuery, AttemptResult, AuditLog, AuditQuery, AuthResponse, LearnerProgressRow,
   Mastery, MediaAnalysis, ProfileInput, ProgressQuery, RegisterInput, Sign, SignInput, SignQuery, SignSampleInfo, SignSampleInput,
-  AccountImpact, AdminSummary, LearnerSummary, PasswordInput, SignImpact, TeacherSummary,
+  AccountImpact, AdminSummary, LearnerSummary, Page, PasswordInput, SignImpact, TeacherSummary,
 } from '../models';
 
 /** Returns the device's time zone so the API's "today" matches the user's day. */
@@ -124,8 +124,13 @@ export class HttpApi extends Api {
   // Returns dashboard totals for the admin.
   adminSummary() { return this.get<AdminSummary>('/admin/summary', { tz: zone() }); }
 
-  // Lists audit log entries with optional filters (Super Admin only).
-  listAuditLogs(q: AuditQuery = {}) { return this.get<AuditLog[]>('/admin/audit-logs', { ...q }); }
+  // Lists one page of audit log entries with optional filters (Super Admin only).
+  async listAuditLogs(q: AuditQuery = {}): Promise<Page<AuditLog>> {
+    const res = await this.get<{ data: AuditLog[]; meta: { current_page: number; last_page: number; total: number } }>('/admin/audit-logs', { ...q });
+    return { items: res.data, page: res.meta.current_page, pages: res.meta.last_page, total: res.meta.total };
+  }
+  // Lists the days that have audit entries, newest first (Super Admin only).
+  listAuditDates() { return this.get<string[]>('/admin/audit-logs/dates'); }
   // Returns one audit log entry.
   getAuditLog(id: string) { return this.get<AuditLog>(`/admin/audit-logs/${id}`); }
 

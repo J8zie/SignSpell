@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, OnDestroy, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Api, ApiError } from '../../../core/api/api';
+import { ConfirmService } from '../../../core/confirm.service';
 import { Sign, SignType } from '../../../core/models';
 import { FileTracker } from '../../../recognition/file-tracker';
 import { ToastService } from '../../../core/toast.service';
@@ -44,6 +45,7 @@ interface Extras { pictures: number; video: boolean; }
 export class Donate implements HasUnsavedChanges, OnInit, OnDestroy {
   private readonly api = inject(Api);
   private readonly toast = inject(ToastService);
+  private readonly confirm = inject(ConfirmService);
   private readonly hints = inject(HintRepository);
   private readonly lessonMedia = inject(LessonMediaRepository);
   private readonly picker = viewChild(ImagePicker);
@@ -280,8 +282,10 @@ export class Donate implements HasUnsavedChanges, OnInit, OnDestroy {
     this.editing.set(null);
   }
 
-  // Removes the hint of a donated sign.
+  // Removes the hint of a donated sign after asking first.
   async removeHint(sign: Sign): Promise<void> {
+    const ok = await this.confirm.ask({ title: 'Remove this hint?', message: `The hint for “${sign.label}” will be deleted.`, confirmLabel: 'Remove', danger: true });
+    if (!ok) return;
     // BACKEND INTEGRATION POINT: this currently updates the frontend repository only.
     await this.hints.remove(sign.signId);
     this.hintsById.set(await this.hints.getAll());

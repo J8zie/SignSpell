@@ -4,6 +4,7 @@ import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Api, ApiError } from '../../core/api/api';
 import { AuthService } from '../../core/auth.service';
+import { ConfirmService } from '../../core/confirm.service';
 import { fullName } from '../../core/models';
 import { ROLE_LABEL } from '../../core/permissions';
 import { ToastService } from '../../core/toast.service';
@@ -24,6 +25,7 @@ import { Reveal } from '../../shared/reveal';
 export class Profile implements HasUnsavedChanges {
   private readonly api = inject(Api);
   private readonly toast = inject(ToastService);
+  private readonly confirm = inject(ConfirmService);
   readonly auth = inject(AuthService);
   readonly form = inject(NonNullableFormBuilder).group({
     firstName: [this.auth.account()?.info.firstName ?? '', [Validators.required, Validators.maxLength(60)]],
@@ -87,6 +89,8 @@ export class Profile implements HasUnsavedChanges {
   async save(): Promise<void> {
     this.error.set('');
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    const ok = await this.confirm.ask({ title: 'Save profile?', message: 'Save your profile changes?', confirmLabel: 'Save' });
+    if (!ok) return;
     this.busy.set(true);
     try {
       this.auth.setAccount(await this.api.updateProfile({ ...this.form.getRawValue(), photo: this.photo() }));

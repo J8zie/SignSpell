@@ -1,7 +1,7 @@
 import {
   Account, AccountInput, Attempt, AttemptInput, AttemptQuery, AttemptResult, AuditLog, AuditQuery, AuthResponse, LearnerProgressRow,
   Mastery, MediaAnalysis, ProfileInput, ProgressQuery, RegisterInput, SetupInput, Sign, SignInput, SignQuery, SignSampleInfo, SignSampleInput,
-  AccountImpact, AdminSummary, LearnerSummary, PasswordInput, SignImpact, TeacherSummary,
+  AccountImpact, AdminSummary, LearnerSummary, Page, PasswordInput, SignImpact, TeacherSummary,
 } from '../models';
 
 /** Raised for any failed API call. `fields` carries Laravel-style validation errors (422). */
@@ -74,7 +74,9 @@ export abstract class Api {
   abstract adminSummary(): Promise<AdminSummary>;
 
   // Lists audit log entries (Super Admin only, read-only).
-  abstract listAuditLogs(query?: AuditQuery): Promise<AuditLog[]>;
+  abstract listAuditLogs(query?: AuditQuery): Promise<Page<AuditLog>>;
+  // Lists the days (YYYY-MM-DD) that have audit entries, newest first.
+  abstract listAuditDates(): Promise<string[]>;
   // Returns one audit log entry.
   abstract getAuditLog(id: string): Promise<AuditLog>;
 

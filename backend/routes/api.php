@@ -69,5 +69,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Audit logs are read-only and Super Admin only; there are intentionally no write routes.
     Route::get('admin/audit-logs', [AuditLogController::class, 'index'])->middleware('role:super_admin');
+    Route::get('admin/audit-logs/dates', [AuditLogController::class, 'dates'])->middleware('role:super_admin');
     Route::get('admin/audit-logs/{auditLog}', [AuditLogController::class, 'show'])->middleware('role:super_admin');
 });

@@ -126,6 +126,11 @@ export class Accounts implements OnInit, OnDestroy {
   async save(): Promise<void> {
     this.error.set('');
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    const a = this.editing();
+    if (a) {
+      const ok = await this.confirm.ask({ title: 'Update this account?', message: `Save your changes to ${fullName(a)} (${a.username})?`, confirmLabel: 'Update' });
+      if (!ok) return;
+    }
     this.busy.set(true);
     // getRawValue also returns the role while it is locked.
     const v = this.form.getRawValue();
@@ -133,7 +138,6 @@ export class Accounts implements OnInit, OnDestroy {
     // A new account always starts active; the status picker only matters when editing.
     if (!this.editing()) input.status = 'active';
     try {
-      const a = this.editing();
       // BACKEND INTEGRATION POINT: these two calls reach the backend, which must also check that only a
       // Super Admin may create or change an Admin account.
       if (a) await this.api.updateAccount(a.userId, input); else await this.api.createAccount(input);
