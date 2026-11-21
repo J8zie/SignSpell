@@ -45,12 +45,14 @@
         <div class="two">
           <div class="field">
             <label for="pw">Password</label>
-            <input id="pw" class="input" type="password" formControlName="password" autocomplete="new-password" [class.invalid]="err(form.controls.password)">
+            <input id="pw" class="input" [type]="showPassword() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" [class.invalid]="err(form.controls.password)">
+            <button type="button" class="link small" style="justify-self:start" (click)="showPassword.set(!showPassword())">{{ showPassword() ? 'Hide' : 'Show' }} password</button>
             @if (err(form.controls.password); as m) { <span class="err">{{ m }}</span> } @else { <span class="help">At least 8 characters.</span> }
           </div>
           <div class="field">
             <label for="cf">Confirm password</label>
-            <input id="cf" class="input" type="password" formControlName="confirm" autocomplete="new-password" [class.invalid]="err(form.controls.confirm)">
+            <input id="cf" class="input" [type]="showConfirm() ? 'text' : 'password'" formControlName="confirm" autocomplete="new-password" [class.invalid]="err(form.controls.confirm)">
+            <button type="button" class="link small" style="justify-self:start" (click)="showConfirm.set(!showConfirm())">{{ showConfirm() ? 'Hide' : 'Show' }} password</button>
             @if (err(form.controls.confirm); as m) { <span class="err">{{ m }}</span> } @else if (form.hasError('mismatch') && form.controls.confirm.dirty) { <span class="err">The passwords do not match.</span> }
           </div>
         </div>

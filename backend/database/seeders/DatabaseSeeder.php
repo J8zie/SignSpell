@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         // The first account is created with: php artisan signspell:make-admin
         $this->call(DatasetSeeder::class);
+        $this->call(SignAssetsSeeder::class);
         $this->call(DemoAccountsSeeder::class);
     }
 }

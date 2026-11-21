@@ -35,6 +35,8 @@ export class Register {
   }, { validators: same });
   readonly busy = signal(false);
   readonly error = signal('');
+  readonly showPassword = signal(false);
+  readonly showConfirm = signal(false);
   readonly err = errorOf;
 
   // Creates the account, then navigates to the role's home page.
