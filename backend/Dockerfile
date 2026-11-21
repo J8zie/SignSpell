@@ -1,5 +1,6 @@
-# SignSpell API — Laravel 13 on PHP 8.3, PostgreSQL (Supabase), Cloudinary, Gemini.
-FROM php:8.3-cli
+# SignSpell API — Laravel 13 on PHP 8.4, PostgreSQL (Supabase), Cloudinary, Gemini.
+# composer.lock resolves Symfony packages that require PHP >= 8.4.1.
+FROM php:8.4-cli
 
 # Postgres driver + opcache; unzip/git are needed by Composer.
 RUN apt-get update \
