@@ -1,0 +1,5 @@
+<div class="timeline" #track role="radiogroup" [attr.aria-label]="ariaLabel()" (keydown)="onKey($event)">
+  @for (n of nodes(); track n.key; let i = $index) {
+    <app-timeline-node [item]="n" [selected]="i === selectedIndex()" [reached]="i <= selectedIndex()" [first]="i === 0" [last]="i === nodes().length - 1" (pick)="choose(n.key)" />
+  }
+</div>

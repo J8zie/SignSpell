@@ -1,0 +1,17 @@
+:host { display: grid; gap: 0.6rem; }
+.stage { position: relative; border-radius: 16px; overflow: hidden; background: var(--surface-2); aspect-ratio: 4 / 3; max-height: 320px; }
+.stage img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.role { position: absolute; top: 10px; left: 10px; padding: 0.15rem 0.65rem; border-radius: 999px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.role.start, .role.only { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.bar { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.b { min-width: 40px; min-height: 40px; padding: 0 0.9rem; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.b:hover:not(:disabled) { border-color: var(--fg); }
+.b:disabled { opacity: 0.35; cursor: default; }
+.play { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+/* the row of small dots: how far along the sequence the learner is */
+.dots { display: flex; gap: 6px; margin: 0 0 0 0.3rem; padding: 0; list-style: none; }
+.dots li { width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: background 0.3s, transform 0.3s; }
+.dots li.done { background: var(--muted); } .dots li.on { background: var(--fg); transform: scale(1.35); }
+.count { margin-left: auto; font-size: 0.8rem; font-variant-numeric: tabular-nums; } .muted { color: var(--muted); }
+.vid { width: 100%; border-radius: 16px; background: var(--media-bg); max-height: 320px; }
+.small-seg { justify-self: start; }

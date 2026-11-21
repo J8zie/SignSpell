@@ -1,0 +1,28 @@
+<section class="lp puzzle" style="--w: min(94vw, 1040px)">
+  <div class="box">
+    <p class="eyebrow rv" style="--i: 0">Piece by piece</p>
+    <h2 class="rv" style="--i: 1">Every sign is a small piece. <span class="serif">Put them together.</span></h2>
+
+    <svg class="board" [attr.viewBox]="'0 0 ' + w + ' ' + h" role="img" aria-label="A jigsaw puzzle of the word SIGNSPELL that puts itself together as you scroll">
+      <defs>
+        <g id="art">
+          <rect [attr.width]="w" [attr.height]="h" class="paper" />
+          @for (b of blobs; track $index) {
+            <circle [attr.cx]="b.x" [attr.cy]="b.y" [attr.r]="b.r" [style.fill]="'var(--c' + b.c + ')'" opacity="0.28" />
+          }
+          <text x="500" y="352" text-anchor="middle" class="word">@for (l of letters; track $index) {<tspan [style.fill]="'var(--c' + ($index + 1) + ')'">{{ l }}</tspan>}</text>
+          <text x="500" y="440" text-anchor="middle" class="sub">fingerspelling, one piece at a time</text>
+        </g>
+        @for (p of pieces; track p.id) {
+          <clipPath [attr.id]="'pz' + p.id"><path [attr.d]="p.d" /></clipPath>
+        }
+      </defs>
+      @for (p of pieces; track p.id) {
+        <g class="piece" [style.--tx]="p.tx" [style.--ty]="p.ty" [style.--rot]="p.rot" [style.--j]="p.j" [style.--ox]="p.cx" [style.--oy]="p.cy">
+          <g [attr.clip-path]="'url(#pz' + p.id + ')'"><use href="#art" /></g>
+          <path class="edge" [attr.d]="p.d" />
+        </g>
+      }
+    </svg>
+  </div>
+</section>

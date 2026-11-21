@@ -1,0 +1,106 @@
+<div class="page studio" appReveal>
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Teacher studio</p>
+      <h1>Donate a sign</h1>
+      <p>Add a sign, show how it is done, and leave a hint. Learners practice with it and you can follow their progress.</p>
+    </div>
+  </header>
+
+  <div class="work">
+    <!-- the three steps; the form id lets the Donate button in the preview panel submit this form -->
+    <form id="studio-form" class="steps" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+
+      <section class="step" [class.done]="done().content" aria-labelledby="s1">
+        <h2 id="s1"><span class="n" aria-hidden="true">01</span> Content</h2>
+        <div class="field">
+          <span class="lbl" id="tl">What kind of sign is it?</span>
+          <div class="seg" role="group" aria-labelledby="tl" appSlider>
+            @for (t of types; track t.id) {
+              <button type="button" [attr.aria-pressed]="signType() === t.id" (click)="setType(t.id)">{{ t.label }}</button>
+            }
+          </div>
+        </div>
+        <div class="field">
+          <label for="lb">{{ typeInfo().label }}</label>
+          <input id="lb" class="input" formControlName="label" autocapitalize="characters" spellcheck="false" autocomplete="off" [class.invalid]="err(form.controls.label)">
+          @if (err(form.controls.label); as m) { <span class="err">{{ m }}</span> } @else { <span class="help">{{ typeInfo().hint }}</span> }
+        </div>
+      </section>
+
+      <section class="step" [class.done]="done().media" aria-labelledby="s2">
+        <h2 id="s2"><span class="n" aria-hidden="true">02</span> Media</h2>
+        @if (isLetter()) {
+          <app-image-picker label="Sign picture" (picked)="onLetterPicked($event)" />
+        } @else {
+          <!-- several pictures in order, plus an optional video. Nothing is uploaded yet: the list is handed to the parent. -->
+          <app-media-uploader [items]="media()" (itemsChange)="onMediaChange($event)" />
+        }
+        @if (imageError()) { <span class="err" role="alert">{{ imageError() }}</span> }
+      </section>
+
+      <section class="step" [class.done]="done().hint" aria-labelledby="s3">
+        <h2 id="s3"><span class="n" aria-hidden="true">03</span> Hint</h2>
+        <!-- the hint is saved together with the sign, so there are no Save/Remove buttons here -->
+        <app-hint-editor fieldId="new-hint" [showActions]="false" [hint]="hintDraft()" (draftChange)="hintDraft.set($event)" />
+      </section>
+    </form>
+
+    <!-- the preview: exactly what a learner will see, updating as the teacher works -->
+    <aside class="preview" aria-label="Preview">
+      <p class="eyebrow">04 · What learners will see</p>
+      <div class="sign-name" [class.empty]="!previewLabel()">{{ previewLabel() || 'Your sign' }}</div>
+      @if (previewItems().length) {
+        <app-media-preview [items]="previewItems()" />
+      } @else {
+        <div class="blank">The pictures will appear here.</div>
+      }
+      @if (hintDraft().trim()) {
+        <div class="hint">
+          <app-hint-button [open]="hintOpen()" controls="preview-hint" (toggle)="hintOpen.set(!hintOpen())" />
+          <app-hint-panel [text]="hintDraft().trim()" [open]="hintOpen()" panelId="preview-hint" />
+        </div>
+      }
+      <button class="btn block" type="submit" form="studio-form" [disabled]="busy()">{{ busy() ? 'Uploading…' : 'Donate this sign' }}</button>
+      @if (analyzing()) { <p class="muted small" role="status">Reading the media and asking the AI…</p> }
+      @if (aiGuess()) { <p class="muted small">AI check on your last donation: <b>{{ aiGuess() }}</b></p> }
+    </aside>
+  </div>
+
+  <!-- the teacher's donated signs as a shelf of tiles, not a table -->
+  <section class="shelf" aria-labelledby="mine">
+    <h2 id="mine">Your signs</h2>
+    @if (loading()) {
+      <div class="spinner" role="status" aria-label="Loading"></div>
+    } @else if (!mine().length) {
+      <p class="muted">You have not donated a sign yet. The first one you add will show up here.</p>
+    } @else {
+      <ul class="tiles" appReveal>
+        @for (s of mine(); track s.signId) {
+          <li class="tile">
+            <span class="thumb">@if (s.imageUrl) { <img [src]="s.imageUrl" [alt]="'Picture for ' + s.label"> } @else { <b aria-hidden="true">{{ s.label[0] }}</b> }</span>
+            <div class="info">
+              <b class="name">{{ s.label }}</b>
+              <span class="muted small">{{ s.signType }} · {{ s.createdAt | date: 'MMM d' }}</span>
+              <span class="tags">
+                @if (extras()[s.signId]; as x) {
+                  @if (x.pictures > 1) { <span class="tag">{{ x.pictures }} pictures</span> }
+                  @if (x.video) { <span class="tag">Video</span> }
+                }
+                @if (hintsById()[s.signId]) { <span class="tag on">Hint</span> }
+              </span>
+            </div>
+            <button type="button" class="btn ghost sm" (click)="editing.set(s)">{{ hintsById()[s.signId] ? 'Edit hint' : 'Add hint' }}</button>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>
+
+<app-modal [open]="!!editing()" [heading]="'Hint for ' + (editing()?.label ?? '')" (closed)="editing.set(null)">
+  @if (editing(); as s) {
+    <app-hint-editor fieldId="edit-hint" [hint]="hintsById()[s.signId] || null" (save)="saveHint(s, $event)" (remove)="removeHint(s)" />
+  }
+</app-modal>

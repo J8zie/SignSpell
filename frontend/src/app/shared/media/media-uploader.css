@@ -1,0 +1,11 @@
+:host { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 0.5rem; }
+.drop { display: grid; gap: 0.5rem; justify-items: start; padding: 1rem 1.1rem; border: 1.5px dashed var(--line); border-radius: 16px; background: var(--surface); transition: border-color 0.2s, background 0.2s; }
+.drop.drag { border-color: var(--accent); background: var(--surface-2); }
+.lead { font-size: 0.95rem; }
+.row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.problems { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.25rem; font-size: 0.82rem; color: var(--bad); }
+.video { display: grid; gap: 0.4rem; max-width: 420px; }
+video { width: 100%; border-radius: 14px; background: var(--media-bg); max-height: 260px; }
+.vbar { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; }
+.help { font-size: 0.82rem; color: var(--muted); }
+.small { font-size: 0.8rem; } .muted { color: var(--muted); }

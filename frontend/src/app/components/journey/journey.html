@@ -1,0 +1,39 @@
+<section class="journey" id="journey" #root [class.static]="!pinned()">
+  <div class="pin" #pin>
+    <div class="head">
+      <div>
+        <h2 class="h2 g-text">What happens in the second after you sign</h2>
+        <p class="lead">Keep scrolling. The six steps slide across the screen.</p>
+      </div>
+      @if (pinned()) {
+        <div class="nav">
+          <span class="count">{{ active() + 1 }} / {{ steps.length }}</span>
+          <button type="button" class="arrow" (click)="goTo(active() - 1)" [disabled]="active() === 0" aria-label="Previous step">←</button>
+          <button type="button" class="arrow" (click)="goTo(active() + 1)" [disabled]="active() === steps.length - 1" aria-label="Next step">→</button>
+        </div>
+      }
+    </div>
+
+    <div class="track" #track [style.transform]="pinned() ? 'translate3d(' + -x() + 'px,0,0)' : null">
+      @for (s of steps; track s.title; let i = $index) {
+        <article class="panel" [class.on]="!pinned() || active() === i">
+          <div class="art">
+            <app-hand class="hand" [state]="s.hand" />
+            <span class="glyph g-text" [class.long]="s.glyph.length > 3" aria-hidden="true">{{ s.glyph }}</span>
+            <img [src]="'images/' + s.img" alt="" loading="lazy" decoding="async" (error)="$any($event.target).style.display = 'none'">
+            <span class="chip">{{ s.chip }}</span>
+          </div>
+          <div class="copy">
+            <span class="no">Step {{ i + 1 }}</span>
+            <h3>{{ s.title }}</h3>
+            <p>{{ s.text }}</p>
+          </div>
+        </article>
+      }
+    </div>
+
+    @if (pinned()) {
+      <div class="bar" aria-hidden="true"><span [style.transform]="'scaleX(' + progress() + ')'"></span></div>
+    }
+  </div>
+</section>

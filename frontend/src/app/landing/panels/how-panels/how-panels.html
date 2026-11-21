@@ -1,0 +1,32 @@
+<section class="lp intro" data-chapter="how" style="--w: min(90vw, 700px)">
+  <div class="box">
+    <p class="eyebrow rv" style="--i: 0">Step by step</p>
+    <h2 class="rv g-text" style="--i: 1">{{ pipeline.title }}</h2>
+    <p class="lead rv" style="--i: 2">{{ pipeline.lead }}</p>
+    <div class="cols rv" style="--i: 3">
+      @for (c of pipeline.columns; track c.title) {
+        <div class="col">
+          <h3>{{ c.title }}</h3>
+          <ul>@for (it of c.items; track it) { <li>{{ it }}</li> }</ul>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+@for (s of steps; track s.n; let i = $index) {
+  <article class="lp step" style="--w: min(86vw, 600px)" [style.--sc]="'var(--c' + (i + 1) + ')'">
+    <div class="card rv" style="--i: -2">
+      <div class="art rv" style="--i: 0">
+        <app-hand class="hand" [state]="s.hand" />
+        <span class="glyph" [class.long]="s.glyph.length > 3" aria-hidden="true">{{ s.glyph }}</span>
+        <span class="chip">{{ s.chip }}</span>
+      </div>
+      <div class="copy">
+        <span class="n rv" style="--i: 1">{{ s.n }}</span>
+        <h3 class="rv" style="--i: 2">{{ s.title }}</h3>
+        <p class="rv" style="--i: 3">{{ s.text }}</p>
+      </div>
+    </div>
+  </article>
+}

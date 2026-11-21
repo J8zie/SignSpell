@@ -1,0 +1,8 @@
+.foot { border-top: 1px solid var(--line); padding-block: clamp(3rem, 8vw, 6rem) calc(2rem + env(safe-area-inset-bottom, 0px)); }
+.cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; margin-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; padding-top: 2rem; border-top: 1px solid var(--line); }
+h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.8rem; }
+ul { list-style: none; margin: 0; padding: 0; }
+li, .cols p { color: var(--muted); font-weight: 300; font-size: 0.95rem; }
+.small { margin-top: 0.8rem; font-size: 0.82rem !important; }
+.legal { margin-top: 3rem; color: var(--muted); font-size: 0.8rem; font-weight: 300; }

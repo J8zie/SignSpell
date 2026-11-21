@@ -1,0 +1,22 @@
+:host { display: contents; }
+.puzzle { padding-inline: clamp(0.5rem, 2vw, 2rem); }
+h2 { font-size: clamp(1.5rem, min(4.2vw, 6svh), 3rem); font-weight: 500; letter-spacing: -0.045em; line-height: 1.08; max-width: 22ch; }
+h2 .serif { font-size: 1.06em; color: var(--muted); letter-spacing: -0.01em; }
+.board { width: 100%; height: clamp(200px, 56svh, 640px); overflow: visible; }
+
+.paper { fill: var(--surface-2); }
+.word { font-family: 'Inter', system-ui, sans-serif; font-weight: 800; font-size: 138px; letter-spacing: 8px; }
+.sub { font-family: var(--serif); font-style: italic; font-size: 44px; fill: var(--fg); opacity: 0.75; }
+.edge { fill: none; stroke: var(--bg); stroke-width: 3.5; stroke-linejoin: round; }
+
+/* piece by piece: the pieces arrive in a shuffled order as the panel comes to the middle (--f, set by the landing page) */
+.piece {
+  --k: clamp(0, calc(var(--f, 1) * 2.8 - var(--j) * 0.12), 1);
+  --n: calc(1 - var(--k));
+  --m: calc(var(--n) * var(--n) * 0.55 + var(--n) * 0.45);
+  transform-origin: calc(var(--ox) * 1px) calc(var(--oy) * 1px);
+  transform: translate(calc(var(--tx) * var(--m) * 1px), calc(var(--ty) * var(--m) * 1px)) rotate(calc(var(--rot) * var(--m) * 1deg));
+  opacity: min(1, calc(var(--k) * 2.2));
+  will-change: transform, opacity;
+}
+@media (max-height: 520px) { h2 { display: none; } .board { height: 70svh; } }

@@ -1,0 +1,12 @@
+<aside class="brand">
+  <a class="logo" routerLink="/" aria-label="SignSpell home"><app-wordmark size="sm" /></a>
+  <div class="mid">
+    <div class="frame" [class.ok]="state() === 'ok'" aria-hidden="true">
+      <app-hand [state]="state()" />
+      <span class="tag">{{ state() === 'ok' ? 'Correct' : 'Wrong sign' }}</span>
+    </div>
+    <h2>Spell with your hands.<br><span class="serif">Get checked in real time.</span></h2>
+    <p>Green means right, red means try again, and a hint tells you what to change.</p>
+  </div>
+  <p class="foot small">Your camera video never leaves your device.</p>
+</aside>

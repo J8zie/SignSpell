@@ -1,0 +1,24 @@
+:host { display: block; }
+.hero { min-height: 100vh; min-height: 100svh; display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: center; gap: clamp(2rem, 5vw, 4rem); padding-block: 7rem 4rem; }
+h1 { font-size: clamp(2.3rem, 6vw, 4.8rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 1.5rem; }
+.line { display: block; overflow: hidden; padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.inner { display: block; padding-right: 0.06em; transform: translateY(105%); opacity: 0; filter: blur(8px); transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.9s ease, filter 0.9s ease; }
+.go .inner { transform: none; opacity: 1; filter: none; }
+.fade { opacity: 0; transform: translateY(16px); transition: opacity 0.9s ease 0.45s, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.45s; }
+.go .fade { opacity: 1; transform: none; }
+.cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-block: 1.8rem 2rem; }
+.why { grid-column: 1 / -1; color: var(--muted); font-size: 0.9rem; font-weight: 300; max-width: 70ch; padding-top: 1.2rem; align-self: start; border-top: 1px solid var(--line); }
+
+.demo { --state: var(--bad); position: relative; justify-self: center; width: min(100%, 400px); aspect-ratio: 4 / 5; border-radius: 32px; border: 3px solid var(--state); background: var(--surface); overflow: hidden; box-shadow: 0 0 48px -14px var(--state); transition: border-color 0.5s, box-shadow 0.5s, opacity 0.9s ease 0.45s, transform 0.9s ease 0.45s; }
+.demo.ok { --state: var(--ok); }
+.ref { position: absolute; top: 14px; left: 14px; z-index: 1; padding: 0.3rem 0.8rem; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-soft); font-size: 0.78rem; font-weight: 500; }
+.skel { position: absolute; inset: 0; padding: 12% 10% 26%; }
+.fb { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 0.25rem; padding: 1rem 1.2rem 1.1rem; background: var(--bg-soft); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.fb strong { color: var(--state); font-size: 1.05rem; transition: color 0.5s; }
+.fb span { color: var(--muted); font-size: 0.85rem; min-height: 2.6em; }
+.hold { height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.hold i { display: block; height: 100%; background: var(--ok); transform: scaleX(0); transform-origin: left; }
+.ok .hold i { animation: fill 1s linear forwards; }
+@keyframes fill { to { transform: scaleX(1); } }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; padding-top: 6.5rem; padding-bottom: 2rem; } }
+@media (max-height: 560px) { .hero { min-height: auto; } }

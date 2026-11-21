@@ -1,0 +1,30 @@
+<footer class="lp foot" data-chapter="contact" style="--w: calc(100vw - 2 * var(--edge))">
+  <div class="inner">
+    <div class="cta">
+      <p class="eyebrow rv" style="--i: 0">Ready when you are</p>
+      <h2 class="rv" style="--i: 1">Start with <span class="serif">one letter.</span></h2>
+      <div class="row rv" style="--i: 2">
+        <a class="btn" routerLink="/register" appMagnetic>Create a free account</a>
+        <a class="btn ghost" routerLink="/login" appMagnetic>Log in</a>
+      </div>
+    </div>
+    <div class="cols rv" style="--i: 3">
+      <div>
+        <h3>Built by</h3>
+        <ul>@for (n of site.team; track n) { <li>{{ n }}</li> }</ul>
+        <p class="small">Submitted to {{ site.adviser }}</p>
+      </div>
+      <div>
+        <h3>Project</h3>
+        <p>{{ site.course }}</p>
+        <p>{{ site.school }}, {{ site.address }}</p>
+        <p class="small">{{ site.period }}</p>
+      </div>
+      <div>
+        <h3>Goals</h3>
+        @for (g of site.goals; track g.code) { <p>{{ g.code }}: {{ g.name }}</p> }
+      </div>
+    </div>
+    <p class="legal small rv" style="--i: 4">© {{ year }} {{ site.name }}. Uses the American Sign Language manual alphabet. Hand tracking runs on your device.</p>
+  </div>
+</footer>

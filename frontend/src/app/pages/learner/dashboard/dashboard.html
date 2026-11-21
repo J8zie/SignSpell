@@ -1,0 +1,87 @@
+<div class="page" appReveal>
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Learner</p>
+      <h1><span class="g-text">Hi, {{ auth.account()?.info?.firstName }}</span></h1>
+      <p>{{ shownAttempts() ? 'Pick up where you left off.' : 'Welcome. Your first sign is one tap away.' }}</p>
+    </div>
+    <a class="btn ghost" routerLink="/app/guide">Open the sign guide</a>
+  </header>
+
+  @if (loading()) {
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  } @else {
+    <div class="board">
+      <div class="main">
+        @if (next(); as n) {
+          <section class="hero card">
+            <div class="hero-art" aria-hidden="true">{{ n.label }}</div>
+            <div class="hero-copy">
+              <span class="chip">{{ nextIsNew() ? 'Start here' : 'Needs practice' }}</span>
+              <h2>Letter {{ n.label }}</h2>
+              <p class="muted">{{ nextIsNew() ? 'A good first sign. Hold it steady for about one second.' : 'This is your weakest letter right now.' }}</p>
+              <a class="btn" [routerLink]="['/app/practice', n.signId]">Practice {{ n.label }}</a>
+            </div>
+          </section>
+        }
+
+        <section class="rings">
+          @for (r of rings(); track r.type) {
+            <a class="ring card" routerLink="/app/guide" [queryParams]="{ type: r.type }">
+              <svg viewBox="0 0 44 44" width="76" height="76" aria-hidden="true">
+                <circle cx="22" cy="22" r="18" class="track" /><circle cx="22" cy="22" r="18" class="bar" [style.stroke-dasharray]="(r.pct * 1.131) + ' 113.1'" />
+              </svg>
+              <div><b>{{ r.title }}</b><span class="muted small">{{ r.total ? r.done + ' of ' + r.total + ' mastered' : 'None added yet' }}</span></div>
+            </a>
+          }
+        </section>
+
+        <section class="card stats">
+          <div class="stat"><b>{{ shownAttempts() }}</b><span>Attempts saved</span></div>
+          <div class="stat"><b>{{ shownAccuracy() === null ? '–' : shownAccuracy() + '%' }}</b><span>Accuracy</span></div>
+          <div class="stat"><b>{{ practiced() }}</b><span>Signs practiced</span></div>
+          <div class="stat"><b>{{ summary()?.streakDays ?? 0 }}</b><span>{{ summary()?.streakDays === 1 ? 'Day in a row' : 'Days in a row' }}</span></div>
+        </section>
+
+        @if (summary()?.practiceNext?.length) {
+          <section class="card">
+            <h2>Practice next</h2>
+            <ul class="rowlist next">
+              @for (s of summary()!.practiceNext; track s.signId) {
+                <li>
+                  <span class="lab">{{ s.label }}</span>
+                  <span class="chip">{{ s.signType }}</span>
+                  <span class="muted small">{{ isNew(s.signId) ? 'Not tried yet' : 'Needs practice' }}</span>
+                  <a class="btn ghost sm go" [routerLink]="['/app/practice', s.signId]">Practice</a>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        <section class="card">
+          <div class="row between"><h2>Recent attempts</h2>@if (recent().length) { <a class="link small" routerLink="/app/progress">See all</a> }</div>
+          @if (!recent().length) {
+            <div class="empty"><p>No attempts yet.</p><p class="small">Practice a sign and every try shows up here.</p></div>
+          } @else {
+            <ul class="recent">
+              @for (a of recent(); track a.attemptsId) {
+                <li><span class="lab">{{ label(a) }}</span><span class="badge" [class.mastered]="a.isCorrect" [class.learning]="!a.isCorrect">{{ a.isCorrect ? 'Correct' : 'Wrong' }}</span><span class="muted small when">{{ a.createdAt | date: 'MMM d, h:mm a' }}</span></li>
+              }
+            </ul>
+          }
+        </section>
+      </div>
+
+      <aside class="card alphabet">
+        <h2>Your alphabet</h2>
+        <ul class="az">
+          @for (s of letters(); track s.signId) {
+            <li><a [class]="levelOf(s.signId)" [routerLink]="['/app/practice', s.signId]" [attr.aria-label]="'Letter ' + s.label + ', ' + levelOf(s.signId)">{{ s.label }}</a></li>
+          }
+        </ul>
+        <p class="legend small muted"><span class="badge new">New</span><span class="badge learning">Learning</span><span class="badge familiar">Familiar</span><span class="badge mastered">Mastered</span></p>
+      </aside>
+    </div>
+  }
+</div>

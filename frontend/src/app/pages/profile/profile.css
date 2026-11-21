@@ -1,0 +1,21 @@
+:host { display: block; }
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: clamp(1rem, 3vw, 1.6rem); align-items: start; }
+.who { display: grid; gap: 1.4rem; justify-items: center; text-align: center; padding-block: 2rem; }
+.names { display: grid; justify-items: center; gap: 0.5rem; }
+.names h2 { margin: 0; font-size: 1.35rem; font-weight: 650; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+.facts { display: grid; gap: 0.7rem; width: 100%; margin: 0; padding-top: 1.2rem; border-top: 1px solid var(--line); text-align: left; }
+.facts div { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.88rem; }
+.facts dt { color: var(--muted); } .facts dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; text-align: right; }
+.details { display: grid; gap: 1.2rem; }
+.details h2 { margin: 0; font-size: 1.15rem; letter-spacing: -0.02em; }
+.layout > .security { grid-column: 1 / -1; }
+.sec-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; }
+.sec-top h2 { margin: 0; font-size: 1.05rem; }
+.pw { display: grid; gap: 1.1rem; margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--line); max-width: 640px; animation: drop 0.4s var(--ease); }
+@keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 0.7rem; margin-top: 0.4rem; padding-top: 1.2rem; border-top: 1px solid var(--line); }
+.state { margin-right: auto; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; color: var(--muted); }
+.state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); transition: background 0.3s, transform 0.4s var(--spring); }
+.state.on::before { background: var(--warn); transform: scale(1.35); }
+@media (max-width: 760px) { .layout { grid-template-columns: 1fr; } .two { grid-template-columns: 1fr; } .actions .btn { flex: 1; } .state { flex-basis: 100%; } }

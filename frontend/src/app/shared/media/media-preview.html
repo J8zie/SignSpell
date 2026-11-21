@@ -1,0 +1,24 @@
+@if (pictures().length || video()) {
+  @if (pictures().length && video()) {
+    <div class="seg small-seg" role="group" aria-label="What to show">
+      <button type="button" [attr.aria-pressed]="tab() === 'pictures'" (click)="tab.set('pictures')">Pictures</button>
+      <button type="button" [attr.aria-pressed]="tab() === 'video'" (click)="tab.set('video'); stop()">Video</button>
+    </div>
+  }
+
+  @if (tab() === 'pictures' && current(); as c) {
+    <div class="stage" #stage>
+      <img [src]="c.url" [alt]="'Step ' + (index() + 1) + ' of ' + pictures().length">
+      <span class="role" [class]="'role ' + role()">{{ roleLabel[role()] }}</span>
+    </div>
+    <div class="bar">
+      <button type="button" class="b" (click)="stop(); prev()" [disabled]="pictures().length < 2" aria-label="Previous picture">‹</button>
+      <button type="button" class="b play" (click)="toggle()" [disabled]="pictures().length < 2" [attr.aria-label]="playing() ? 'Pause' : 'Play the sequence'">{{ playing() ? 'Pause' : 'Play' }}</button>
+      <button type="button" class="b" (click)="stop(); next()" [disabled]="pictures().length < 2" aria-label="Next picture">›</button>
+      <ol class="dots" aria-hidden="true">@for (p of pictures(); track p.id; let i = $index) { <li [class.on]="i === index()" [class.done]="i < index()"></li> }</ol>
+      <span class="count small muted">{{ index() + 1 }} / {{ pictures().length }}</span>
+    </div>
+  } @else if (video(); as v) {
+    <video class="vid" [src]="v.url" controls preload="metadata" playsinline [attr.aria-label]="'Video: ' + v.name"></video>
+  }
+}

@@ -1,0 +1,35 @@
+<header class="bar" [class.open]="open()">
+  <a class="logo" href="#top" (click)="open.set(false)" aria-label="SignSpell, back to top">
+    <span class="dots" aria-hidden="true"><i></i><i></i></span>
+    <span class="g-text">SignSpell</span>
+  </a>
+
+  <nav id="nav" class="links" aria-label="Primary">
+    @for (l of links; track l.href) {
+      <a [href]="l.href" (click)="open.set(false)" appMagnetic>{{ l.label }}</a>
+    }
+  </nav>
+
+  <div class="actions">
+    @if (auth.account()) {
+      <a class="btn sm" [routerLink]="auth.homePath()">Open app</a>
+    } @else {
+      <a class="btn ghost sm login" routerLink="/login">Log in</a>
+      <a class="btn sm" routerLink="/register">Get started</a>
+    }
+    <button class="icon" type="button" (click)="theme.toggle()"
+            [attr.aria-label]="theme.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'">
+      @if (theme.theme() === 'dark') {
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      } @else {
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      }
+    </button>
+    <button class="icon menu" type="button" (click)="open.set(!open())" aria-controls="nav"
+            [attr.aria-expanded]="open()" aria-label="Menu">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        @if (open()) { <path d="M6 6l12 12M18 6L6 18"/> } @else { <path d="M4 8h16M4 16h16"/> }
+      </svg>
+    </button>
+  </div>
+</header>

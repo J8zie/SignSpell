@@ -1,0 +1,66 @@
+<div class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Admin</p>
+      <h1>Signs</h1>
+      <p class="summary">Everything learners can practice, including signs donated by teachers · <b>{{ signs().length }}</b> shown</p>
+    </div>
+    @if (canEdit()) {
+      <a class="btn" routerLink="/admin/signs/new">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        Add sign
+      </a>
+    }
+  </header>
+
+  <div class="tools">
+    <div class="seg" role="group" aria-label="Type of sign" appSlider>
+      <button type="button" [attr.aria-pressed]="type() === ''" (click)="setType('')">All</button>
+      <button type="button" [attr.aria-pressed]="type() === 'letter'" (click)="setType('letter')">Letters</button>
+      <button type="button" [attr.aria-pressed]="type() === 'word'" (click)="setType('word')">Words</button>
+      <button type="button" [attr.aria-pressed]="type() === 'sentence'" (click)="setType('sentence')">Sentences</button>
+    </div>
+    <div class="seg" appSlider><button type="button" [attr.aria-pressed]="donated()" (click)="toggleDonated()">Donated by teachers</button></div>
+    <label class="sr" for="s">Search signs</label>
+    <input id="s" class="input search" type="search" placeholder="Search a sign" [value]="q()" (input)="search($any($event.target).value)" autocomplete="off">
+  </div>
+
+  @if (loading()) {
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  } @else if (!signs().length) {
+    <div class="empty">
+      <p class="big">{{ q() || type() || donated() ? 'No sign matches.' : 'No signs yet.' }}</p>
+      <p>{{ q() || type() || donated() ? 'Try a different search or filter.' : 'Add the first sign, and it appears here for every learner.' }}</p>
+      @if (!q() && !type() && !donated() && canEdit()) { <a class="btn sm" routerLink="/admin/signs/new">Add a sign</a> }
+    </div>
+  } @else {
+    <!-- a library of tiles (the picture first), not a table -->
+    <ul class="library" appReveal>
+      @for (s of signs(); track s.signId) {
+        <li class="sign">
+          <a class="thumb" [routerLink]="canEdit() ? ['/admin/signs', s.signId, 'edit'] : null" [attr.aria-label]="canEdit() ? 'Edit ' + s.label : s.label">
+            @if (s.imageUrl) { <img [src]="s.imageUrl" [alt]="'Picture for ' + s.label"> } @else { <b aria-hidden="true">{{ s.label[0] }}</b> }
+          </a>
+          <div class="meta">
+            <b class="label">{{ s.label }}</b>
+            <span class="muted small">{{ s.signType }} · {{ s.ownerName ?? 'SignSpell' }}</span>
+            <span class="muted small">Added {{ s.createdAt | date: 'MMM d, y' }}</span>
+            <span class="tags">
+              @if (extras()[s.signId]; as x) {
+                @if (x.pictures > 1) { <span class="tag">{{ x.pictures }} pictures</span> }
+                @if (x.video) { <span class="tag">Video</span> }
+              }
+              @if (hintsById()[s.signId]) { <span class="tag on">Hint</span> }
+            </span>
+          </div>
+          @if (canEdit()) {
+            <span class="act">
+              <a class="btn ghost sm" [routerLink]="['/admin/signs', s.signId, 'edit']">Edit</a>
+              <button class="btn ghost sm" type="button" (click)="remove(s)" [attr.aria-label]="'Delete ' + s.label">Delete</button>
+            </span>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>

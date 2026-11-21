@@ -1,0 +1,51 @@
+<section class="guide wrap" id="guide">
+  <h2 class="h2 g-text">The letter guide</h2>
+  <p class="lead">Search by letter or by hand shape, like “thumb” or “fist”.</p>
+
+  <div class="layout">
+    <aside class="detail" aria-live="polite">
+      <div class="pic">
+        <span class="big g-text" aria-hidden="true">{{ current().l }}</span>
+        <img [src]="'images/signs/' + current().l.toLowerCase() + '.jpg'" [alt]="'Reference sign for ' + current().l" decoding="async"
+             (error)="$any($event.target).style.display = 'none'" (load)="$any($event.target).style.display = ''">
+      </div>
+      <h3>Letter {{ current().l }}</h3>
+      <p>{{ current().cue }}.</p>
+      @if (current().kind === 'look-alike') {
+        <p class="note"><span class="dot look"></span>A, M, N, S and T look alike. SignSpell tells them apart by thumb and fingertip position.</p>
+      } @else if (current().kind === 'motion') {
+        <p class="note"><span class="dot move"></span>J and Z are checked from the path your fingertip draws over several frames.</p>
+      }
+    </aside>
+
+    <div class="picker">
+      <label class="search">
+        <span class="sr">Search the letter guide</span>
+        <input type="search" placeholder="Search a letter or hand shape" [value]="query()" (input)="onSearch($event)" autocomplete="off" enterkeyhint="search">
+      </label>
+
+      @if (list().length) {
+        <ul class="grid" (pointermove)="onMove($event)" (pointerleave)="onLeave()">
+          @for (x of list(); track x.l) {
+            <li>
+              <button type="button" class="tile" [class.on]="selected() === x.l" [attr.aria-pressed]="selected() === x.l"
+                      (mouseenter)="pick(x.l)" (focus)="pick(x.l)" (click)="pick(x.l)">
+                {{ x.l }}
+                @if (x.kind) { <i class="dot" [class.look]="x.kind === 'look-alike'" [class.move]="x.kind === 'motion'"></i> }
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty">No sign matches “{{ query() }}”. Try a letter from A to Z, or a word like “thumb”.</p>
+      }
+
+      <p class="legend"><span class="dot look"></span>Look-alike letter <span class="dot move"></span>Motion letter</p>
+    </div>
+  </div>
+
+  <div class="follow" #follow [class.show]="showFollow()" aria-hidden="true">
+    <b class="g-text">{{ current().l }}</b>
+    <span>{{ current().cue }}</span>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+<div class="field">
+  <span class="lbl">{{ label() }}</span>
+  <label class="drop" [class.drag]="dragging()" (dragover)="$event.preventDefault(); dragging.set(true)" (dragleave)="dragging.set(false)" (drop)="drop($event)">
+    @if (preview() ?? current(); as src) {
+      <img [src]="src" alt="Preview of the chosen picture">
+    } @else {
+      <span class="muted small">Tap to choose a picture, or drop one here</span>
+    }
+    <input class="sr" type="file" accept="image/jpeg,image/png,image/webp" (change)="choose($any($event.target).files, $any($event.target))">
+  </label>
+  <div class="row small">
+    <span class="help">JPG, PNG or WebP, up to 2 MB.</span>
+    @if (preview()) { <button type="button" class="link" (click)="clear()">Remove</button> }
+  </div>
+  @if (error()) { <span class="err">{{ error() }}</span> }
+</div>

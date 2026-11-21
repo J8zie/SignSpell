@@ -1,0 +1,99 @@
+<div class="page" appReveal>
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">{{ isSuper() ? 'Super admin' : 'Admin' }}</p>
+      <h1>People</h1>
+      <p class="summary"><b>{{ counts().learner }}</b> learners <span class="dot">·</span> <b>{{ counts().teacher }}</b> teachers @if (isSuper()) { <span class="dot">·</span> <b>{{ counts().admin }}</b> admins }</p>
+    </div>
+    <button class="btn" type="button" (click)="openForm(null)">Add person</button>
+  </header>
+
+  <!-- ONLY the Super Admin gets this area. Admins never see it (UI only: the backend enforces the real rule). -->
+  @if (isSuper()) {
+    <section class="admins" aria-labelledby="adm">
+      <div class="sec-head">
+        <div><h2 id="adm">Manage admins</h2><p class="muted small">Admins can manage learners and teachers. Only you can create or change an Admin.</p></div>
+        <button class="btn ghost sm" type="button" (click)="openForm(null, 'admin')">Create admin</button>
+      </div>
+      <ul class="people" appReveal>
+        @for (a of admins(); track a.userId) {
+          <li class="person">
+            <span class="avatar" aria-hidden="true">@if (a.info.profilePhotoUrl) { <img [src]="a.info.profilePhotoUrl" alt=""> } @else { {{ a.info.firstName[0] }}{{ a.info.lastName[0] }} }</span>
+            <div class="who"><b>{{ name(a) }}</b><span class="muted small">{{ a.username }} · {{ a.info.email }}</span></div>
+            <span class="chip" [class.super]="a.role === 'super_admin'">{{ roleLabel[a.role] }}</span>
+            <span class="actions">
+              <button class="btn ghost sm" type="button" (click)="openForm(a)">Edit</button>
+              <button class="btn ghost sm" type="button" (click)="remove(a)" [disabled]="a.userId === auth.account()?.userId" [attr.aria-label]="'Delete ' + name(a)">Delete</button>
+            </span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <section aria-labelledby="ppl">
+    <div class="bar">
+      <h2 id="ppl" class="sr">Accounts</h2>
+      <div class="seg" role="group" aria-label="Show" appSlider>
+        @for (f of filters(); track f.id) { <button type="button" [attr.aria-pressed]="role() === f.id" (click)="setRole(f.id)">{{ f.label }}</button> }
+      </div>
+      <label class="sr" for="s">Search accounts</label>
+      <input id="s" class="input search" type="search" placeholder="Search name, username or email" [value]="q()" (input)="search($any($event.target).value)" autocomplete="off">
+    </div>
+
+    @if (loading()) {
+      <div class="spinner" role="status" aria-label="Loading"></div>
+    } @else if (!people().length) {
+      <p class="muted">No accounts match.</p>
+    } @else {
+      <ul class="people" appReveal>
+        @for (a of people(); track a.userId) {
+          <li class="person">
+            <span class="avatar" aria-hidden="true">@if (a.info.profilePhotoUrl) { <img [src]="a.info.profilePhotoUrl" alt=""> } @else { {{ a.info.firstName[0] }}{{ a.info.lastName[0] }} }</span>
+            <div class="who"><b>{{ name(a) }}</b><span class="muted small">{{ a.username }} · {{ a.info.email }}</span></div>
+            <span class="chip">{{ roleLabel[a.role] }}</span>
+            @if (a.status === 'disabled') { <span class="chip off">Disabled</span> }
+            <span class="actions">
+              <button class="btn ghost sm" type="button" (click)="openForm(a)">Edit</button>
+              <button class="btn ghost sm" type="button" (click)="remove(a)" [disabled]="a.userId === auth.account()?.userId" [attr.aria-label]="'Delete ' + name(a)">Delete</button>
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>
+
+<app-modal [open]="open()" [heading]="editing() ? 'Edit account' : (form.controls.role.value === 'admin' ? 'Create admin' : 'Add person')" (closed)="open.set(false)">
+  <form class="stack" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+    <div class="field">
+      <label for="ro">Role</label>
+      <select id="ro" class="input" formControlName="role">
+        @for (r of roleChoices(); track r) { <option [value]="r">{{ roleLabel[r] }}</option> }
+      </select>
+      @if (err(form.controls.role); as m) { <span class="err">{{ m }}</span> }
+    </div>
+    <div class="two">
+      <div class="field"><label for="fn">First name</label><input id="fn" class="input" formControlName="firstName" [class.invalid]="err(form.controls.firstName)">@if (err(form.controls.firstName); as m) { <span class="err">{{ m }}</span> }</div>
+      <div class="field"><label for="ln">Last name</label><input id="ln" class="input" formControlName="lastName" [class.invalid]="err(form.controls.lastName)">@if (err(form.controls.lastName); as m) { <span class="err">{{ m }}</span> }</div>
+    </div>
+    <div class="field"><label for="em">Email</label><input id="em" class="input" type="email" formControlName="email" autocapitalize="none" [class.invalid]="err(form.controls.email)">@if (err(form.controls.email); as m) { <span class="err">{{ m }}</span> }</div>
+    <div class="field"><label for="un">Username</label><input id="un" class="input" formControlName="username" autocapitalize="none" spellcheck="false" [class.invalid]="err(form.controls.username, { pattern: 'Use 3 to 20 letters, numbers, dots or underscores.' })">@if (err(form.controls.username, { pattern: 'Use 3 to 20 letters, numbers, dots or underscores.' }); as m) { <span class="err">{{ m }}</span> }</div>
+    @if (editing()) {
+      <div class="field">
+        <label for="st">Status</label>
+        <select id="st" class="input" formControlName="status">
+          <option value="active">Active</option>
+          <option value="disabled">Disabled</option>
+        </select>
+        <span class="help">A disabled account cannot sign in until it is reactivated.</span>
+      </div>
+    }
+    <div class="field"><label for="pw">{{ editing() ? 'New password (optional)' : 'Password' }}</label><input id="pw" class="input" type="password" formControlName="password" autocomplete="new-password" [class.invalid]="err(form.controls.password)">@if (err(form.controls.password); as m) { <span class="err">{{ m }}</span> } @else if (editing()) { <span class="help">Leave blank to keep the current password.</span> }</div>
+    <div class="row">
+      <button class="btn" type="submit" [disabled]="busy()">{{ busy() ? 'Saving…' : 'Save' }}</button>
+      <button class="btn ghost" type="button" (click)="open.set(false)">Cancel</button>
+    </div>
+  </form>
+</app-modal>

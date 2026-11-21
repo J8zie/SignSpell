@@ -1,0 +1,127 @@
+<div class="page" appReveal>
+  <a class="back" routerLink="/app/guide">← Sign guide</a>
+
+  @if (phase() === 'loading') {
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  } @else if (phase() === 'missing') {
+    <div class="empty"><p>That sign could not be found.</p><a class="btn sm" routerLink="/app/guide">Back to the guide</a></div>
+  }
+
+  @if (sign(); as s) {
+    <div class="head">
+      <div>
+        <h1><span class="g-text">{{ s.signType === 'letter' ? 'Letter ' : '' }}{{ s.label }}</span></h1>
+        <p class="muted">{{ goal() }}</p>
+      </div>
+      <div class="row">
+        @if (mode() !== 'letter') { <span class="chip timer" [class.low]="remaining() <= 10 && phase() === 'running'">⏱ {{ timeText() }}</span> }
+        <app-mastery-badge [level]="mastery()?.masteryLevel ?? 'new'" />
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="left">
+        @if (mode() !== 'letter') {
+          <ol class="word" aria-label="Spelling progress">
+            @for (c of chars(); track $index) {
+              @if (c === ' ') {
+                <li class="gap"><button type="button" class="space" [class.need]="needsSpace() && $index === pos()" [disabled]="!(needsSpace() && $index === pos())" (click)="space()">Space</button></li>
+              } @else {
+                <li class="t" [class.done]="$index < pos()" [class.cur]="$index === pos()" [class.bad]="wrongAt() === $index">{{ c }}</li>
+              }
+            }
+          </ol>
+          @if (mode() === 'sentence' && phase() === 'running') { <p class="help">When a word is finished, press the Space button (or the space bar).</p> }
+        }
+
+        <div class="cam" [class.ok]="feedback() === 'ok'" [class.bad]="feedback() === 'bad'" [class.idle]="phase() !== 'running'">
+          <div class="mirror" [class.off]="kind() !== 'camera'">
+            <video #video playsinline muted></video>
+            <canvas #overlay></canvas>
+          </div>
+
+          @if (phase() === 'ready' || phase() === 'starting') {
+            <div class="cover">
+              @if (phase() === 'starting') {
+                <div class="spinner" role="status"></div>
+                <p>Starting the camera and loading hand tracking…</p>
+              } @else {
+                @if (problem(); as p) {
+                  <div class="alert" role="alert"><b>{{ p.title }}</b><br>{{ p.text }}@if (p.detail) { <br><span class="small muted">Technical details: {{ p.detail }}</span> }</div>
+                }
+                <button class="btn" type="button" (click)="start()">Start camera</button>
+                <p class="help">Allow the camera once. After that it starts by itself for the next signs. Your video stays on your device; only the result of each attempt is saved.</p>
+              }
+            </div>
+          }
+
+          @if (phase() === 'done' || phase() === 'timeout') {
+            @if (result(); as r) {
+              <div class="cover result" [class.good]="r.ok">
+                <h2>{{ r.ok ? 'Correct!' : 'Time is up' }}</h2>
+                <p>{{ r.ok ? (mode() === 'letter' ? 'You held it steady.' : 'Finished in ' + r.seconds + ' seconds.') : 'You spelled ' + (engineBuilt() || 'nothing yet') + '. Try again.' }}</p>
+                <div class="row">
+                  <button class="btn" type="button" (click)="again()">Practice again</button>
+                  @if (nextId(); as n) { <a class="btn ghost" [routerLink]="['/app/practice', n]">Next</a> }
+                </div>
+              </div>
+            }
+          }
+
+          @if (hint() && phase() === 'running') { <div class="hint" role="alert"><b>Hint:</b> {{ hint() }}</div> }
+
+          @if (phase() === 'running') {
+            <div class="chips">
+              <span class="chip" [class.good]="lightingOk()" [class.warn]="lightingOk() === false">{{ lightingOk() === false ? 'Fix lighting' : 'Lighting OK' }}</span>
+              <span class="chip" [class.good]="handSeen()" [class.warn]="!handSeen()">{{ handSeen() ? 'Hand found' : 'No hand' }}</span>
+              <span class="chip">Saved {{ saved() }}</span>
+            </div>
+            <div class="hold" aria-hidden="true"><i [style.transform]="'scaleX(' + progress() + ')'"></i></div>
+          }
+        </div>
+
+        <p class="guide" role="status" aria-live="polite">{{ phase() === 'running' ? guidance() : '' }}</p>
+
+        <!-- the teacher's hint stays out of the way until the learner asks for it -->
+        @if (teacherHint(); as h) {
+          <div class="teacher-hint">
+            <app-hint-button [open]="hintOpen()" controls="teacher-hint" (toggle)="hintOpen.set(!hintOpen())" />
+            <app-hint-panel [text]="h" [open]="hintOpen()" panelId="teacher-hint" />
+          </div>
+        }
+
+        @if (pendingCount()) { <div class="alert">{{ pendingCount() }} attempt(s) not saved. <button class="link" type="button" (click)="flush()">Retry</button></div> }
+      </div>
+
+      <aside class="ref card">
+        <h2>Reference</h2>
+        @if (lessonItems().length) {
+          <!-- how the teacher shows this word or sentence: pictures in order, and a video if there is one -->
+          <app-media-preview [items]="lessonItems()" />
+        }
+        @if (mode() === 'letter') {
+          <div class="pic">
+            @if (s.imageUrl) { <img [src]="s.imageUrl" [alt]="'Reference sign for ' + s.label"> } @else { <span class="big g-text" aria-hidden="true">{{ s.label }}</span> }
+          </div>
+        } @else {
+          <div class="strip">
+            @for (r of refs(); track r.i) {
+              @if (r.ch !== ' ') {
+                <div class="mini" [class.cur]="r.i === pos()" [class.done]="r.i < pos()">
+                  @if (r.sign?.imageUrl) { <img [src]="r.sign!.imageUrl" [alt]="'Sign for ' + r.ch"> } @else { <span aria-hidden="true">{{ r.ch }}</span> }
+                </div>
+              } @else { <span class="sep"></span> }
+            }
+          </div>
+          @if (current(); as c) {
+            <div class="pic small-pic">
+              @if (c.sign?.imageUrl) { <img [src]="c.sign!.imageUrl" [alt]="'Reference sign for ' + c.ch"> } @else { <span class="big g-text" aria-hidden="true">{{ c.ch === ' ' ? '␣' : c.ch }}</span> }
+            </div>
+          }
+        }
+        @if (cue()) { <p class="muted">{{ expected() === ' ' ? 'Press the Space button.' : cue() }}</p> }
+        <div class="row small muted"><span>{{ mastery()?.attemptsCount ?? 0 }} attempts</span><span>·</span><span>{{ accuracy() }} accuracy</span></div>
+      </aside>
+    </div>
+  }
+</div>

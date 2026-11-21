@@ -1,0 +1,83 @@
+<div class="page" appReveal>
+  <div class="page-head">
+    <div>
+      <h1><span class="g-text">Sign guide</span></h1>
+      <p>Search a letter, word or sentence, then press Get started.</p>
+    </div>
+  </div>
+
+  <div class="filters">
+    <div class="field grow">
+      <label class="sr" for="q">Search signs</label>
+      <input id="q" class="input" type="search" placeholder="Search, for example M or HELLO" [value]="query()" (input)="onQuery($any($event.target).value)"
+             [class.invalid]="queryError()" autocomplete="off" autocapitalize="characters" enterkeyhint="search">
+      @if (queryError()) { <span class="err" role="alert">{{ queryError() }}</span> }
+    </div>
+    <div class="seg" role="group" aria-label="Type" appSlider>
+      @for (t of types; track t.id) {
+        <button type="button" [attr.aria-pressed]="type() === t.id" (click)="setType(t.id)">{{ t.label }}</button>
+      }
+    </div>
+    <div class="selects">
+      <label class="sr" for="lv">Mastery</label>
+      <select id="lv" class="input" [value]="level()" (change)="level.set($any($event.target).value)">
+        <option value="all">Any mastery</option><option value="new">New</option><option value="learning">Learning</option><option value="familiar">Familiar</option><option value="mastered">Mastered</option>
+      </select>
+      <label class="sr" for="so">Sort</label>
+      <select id="so" class="input" [value]="sort()" (change)="sort.set($any($event.target).value)">
+        <option value="az">A to Z</option><option value="za">Z to A</option><option value="weak">Weakest first</option><option value="recent">Recently practiced</option>
+      </select>
+    </div>
+  </div>
+
+  @if (queryError()) {
+    <div class="empty"><p>Fix the search to see results.</p></div>
+  } @else if (loading()) {
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  } @else if (!rows().length) {
+    <div class="empty">
+      <p>No signs found{{ query().trim() ? ' for “' + query().trim() + '”' : '' }}.</p>
+      <p class="small">Try a letter from A to Z, a different type, or clear the filters.</p>
+      @if (filtered()) { <button class="btn ghost sm" type="button" (click)="clear()">Clear filters</button> }
+    </div>
+  } @else {
+    <div class="layout">
+      <ul class="tiles" [class.long]="type() !== 'letter'">
+        @for (r of rows(); track r.sign.signId) {
+          <li>
+            <button type="button" class="tile" [class.on]="activeId() === r.sign.signId" [attr.aria-pressed]="activeId() === r.sign.signId"
+                    (click)="selectedId.set(r.sign.signId)" (focus)="selectedId.set(r.sign.signId)">
+              <span class="lab">{{ r.sign.label }}</span>
+              <i class="dot" [class]="r.m?.masteryLevel ?? 'new'" aria-hidden="true"></i>
+            </button>
+          </li>
+        }
+      </ul>
+
+      @if (selected(); as s) {
+        <aside class="detail card" aria-live="polite">
+          <div class="pic">
+            @if (s.sign.imageUrl) { <img [src]="s.sign.imageUrl" [alt]="'Reference sign for ' + s.sign.label"> } @else { <span class="big g-text" aria-hidden="true">{{ s.sign.label.length > 4 ? s.sign.label[0] : s.sign.label }}</span> }
+          </div>
+          <div class="row between">
+            <h2>{{ s.sign.label }}</h2>
+            <app-mastery-badge [level]="s.m?.masteryLevel ?? 'new'" />
+          </div>
+          <p class="muted">{{ cue(s.sign) }}</p>
+          <div class="row small muted">
+            <span>{{ s.m?.attemptsCount ?? 0 }} attempts</span><span>·</span><span>{{ accuracy(s.m) }} accuracy</span>
+            @if (s.sign.ownerName) { <span>·</span><span>Donated by {{ s.sign.ownerName }}</span> }
+          </div>
+          <a class="btn block" [routerLink]="['/app/practice', s.sign.signId]">Get started</a>
+        </aside>
+      }
+    </div>
+  }
+</div>
+
+@if (selected(); as s) {
+  <div class="mobile-cta">
+    <span><b>{{ s.sign.label }}</b> <span class="muted small">{{ s.sign.signType }}</span></span>
+    <a class="btn sm" [routerLink]="['/app/practice', s.sign.signId]">Get started</a>
+  </div>
+}

@@ -1,0 +1,91 @@
+<div class="page" appReveal>
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Learner</p>
+      <h1>My progress</h1>
+      <p class="summary">
+        <b>{{ counts().mastered }}</b><span class="of">/ {{ letters().length }}</span> letters mastered <span class="dot">·</span>
+        <b>{{ accuracy() === null ? '–' : accuracy() + '%' }}</b> correct <span class="dot">·</span>
+        <b>{{ total() }}</b> attempts
+      </p>
+    </div>
+    <div class="seg" role="group" aria-label="View" appSlider>
+      <button type="button" [attr.aria-pressed]="tab() === 'mastery'" (click)="tab.set('mastery')">Mastery</button>
+      <button type="button" [attr.aria-pressed]="tab() === 'history'" (click)="tab.set('history')">History</button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  } @else if (tab() === 'mastery') {
+    <section aria-labelledby="lt">
+      <h2 id="lt">Letters</h2>
+      <ul class="letters" appReveal>
+        @for (s of letters(); track s.signId) {
+          <li>
+            <a class="lt" [class]="'lt ' + level(s.signId)" [routerLink]="['/app/practice', s.signId]" [attr.aria-label]="s.label + ', ' + level(s.signId) + ', ' + pct(s.signId) + ' percent'">
+              <b>{{ s.label }}</b>
+              <small>{{ m(s.signId) ? pct(s.signId) + '%' : '–' }}</small>
+            </a>
+          </li>
+        }
+      </ul>
+      <p class="legend small muted">
+        <span class="badge new">New {{ counts().new }}</span><span class="badge learning">Learning {{ counts().learning }}</span>
+        <span class="badge familiar">Familiar {{ counts().familiar }}</span><span class="badge mastered">Mastered {{ counts().mastered }}</span>
+      </p>
+    </section>
+
+    @if (others().length) {
+      <section aria-labelledby="ws">
+        <h2 id="ws">Words and sentences</h2>
+        <ul class="rows" appReveal>
+          @for (s of others(); track s.signId) {
+            <li class="row-item">
+              <a class="link name" [routerLink]="['/app/practice', s.signId]">{{ s.label }}</a>
+              <span class="muted small">{{ s.signType }}</span>
+              <app-mastery-badge [level]="level(s.signId)" />
+              <span class="meter" aria-hidden="true"><i [style.width.%]="pct(s.signId)"></i></span>
+              <span class="small muted num">{{ pct(s.signId) }}% · {{ m(s.signId)?.attemptsCount }} tries</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  } @else {
+    <!-- History: the timeline only has dots for days that have attempts -->
+    @if (!attempts().length) {
+      <div class="empty"><p class="big">No attempts yet.</p><p class="muted">Every try you make is saved here.</p><a class="btn sm" routerLink="/app/guide">Start practicing</a></div>
+    } @else {
+      <section aria-labelledby="hist">
+        <h2 id="hist">Days you practiced</h2>
+        <p class="muted small">Each dot is a day with at least one attempt.</p>
+        @if (timeline().length) {
+          <app-date-timeline [items]="timeline()" [selected]="day()" allLabel="All days" ariaLabel="Days on which you practiced" (selectedChange)="setDay($event)" />
+        }
+        <div class="seg types" role="group" aria-label="Type of sign">
+          @for (t of typeChoices; track t.id) { <button type="button" [attr.aria-pressed]="type() === t.id" (click)="setType(t.id)">{{ t.label }}</button> }
+        </div>
+      </section>
+
+      @if (!filtered().length) {
+        <p class="muted">No attempts of this kind.</p>
+      } @else {
+        <ul class="rows attempts" appReveal>
+          @for (a of visible(); track a.attemptsId) {
+            <li class="attempt" [class.ok]="a.isCorrect">
+              <span class="mark" aria-hidden="true">{{ a.isCorrect ? '✓' : '✕' }}</span>
+              <span class="sign"><b>{{ signOf(a)?.label ?? '?' }}</b> <span class="muted small">{{ signOf(a)?.signType }}</span></span>
+              <span class="small muted said">you signed {{ a.predictedLabel }} · {{ (a.confidence * 100).toFixed(0) }}%</span>
+              <span class="small muted when">{{ a.createdAt | date: day() ? 'h:mm a' : 'MMM d, h:mm a' }}</span>
+              <span class="sr">{{ a.isCorrect ? 'Correct' : 'Wrong' }}</span>
+            </li>
+          }
+        </ul>
+        @if (filtered().length > shown()) {
+          <button class="btn ghost sm more" type="button" (click)="shown.set(shown() + 25)">Show more ({{ filtered().length - shown() }} left)</button>
+        }
+      }
+    }
+  }
+</div>

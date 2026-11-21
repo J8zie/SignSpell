@@ -1,0 +1,10 @@
+<dialog #dlg (cancel)="svc.answer(false)" (click)="backdrop($event, dlg)">
+  @if (svc.request(); as r) {
+    <h2>{{ r.title }}</h2>
+    <p>{{ r.message }}</p>
+    <div class="row">
+      <button class="btn ghost sm" type="button" (click)="svc.answer(false)">Cancel</button>
+      <button class="btn sm" [class.danger]="r.danger" type="button" (click)="svc.answer(true)">{{ r.confirmLabel }}</button>
+    </div>
+  }
+</dialog>

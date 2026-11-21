@@ -1,0 +1,32 @@
+<footer class="foot" id="team">
+  <div class="wrap">
+    <div class="cta">
+      <h2 class="h2 g-text">Start with one letter.</h2>
+      <a class="btn" routerLink="/register" appMagnetic>Create a free account</a>
+    </div>
+
+    <div class="cols">
+      <div>
+        <h3>Built by</h3>
+        <ul>
+          @for (n of team; track n) { <li>{{ n }}</li> }
+        </ul>
+        <p class="small">Submitted to Anfred Albit</p>
+      </div>
+      <div>
+        <h3>Project</h3>
+        <p>ITELEC 3, Bachelor of Science in Information Technology</p>
+        <p>ACES Tagum College, Inc., Mankilam, Tagum City</p>
+        <p class="small">A.Y. 2026 to 2027</p>
+      </div>
+      <div>
+        <h3>Goals</h3>
+        <p>SDG 4: Quality Education</p>
+        <p>SDG 10: Reduced Inequalities</p>
+        <p class="small">Hand detection runs on your device. Only each result is saved, never video.</p>
+      </div>
+    </div>
+
+    <p class="legal">© {{ year }} SignSpell. Uses the American Sign Language manual alphabet.</p>
+  </div>
+</footer>

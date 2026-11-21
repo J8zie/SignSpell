@@ -1,0 +1,47 @@
+:host { display: block; --gutter: max(1.25rem, calc((100vw - 1200px) / 2)); }
+.journey { position: relative; }
+.pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: clamp(1rem, 3.2vh, 2rem); padding-top: 4.5rem; }
+.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; padding-inline: var(--gutter); }
+.head .h2 { max-width: 20ch; margin-bottom: 0.5rem; }
+.nav { display: flex; align-items: center; gap: 0.5rem; }
+.count { white-space: nowrap; color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums; margin-right: 0.5rem; }
+.arrow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: transparent; font-size: 1.1rem; cursor: pointer; touch-action: manipulation; transition: border-color 0.25s, opacity 0.25s; }
+.arrow:disabled { opacity: 0.35; cursor: default; }
+@media (hover: hover) { .arrow:not(:disabled):hover { border-color: var(--fg); } }
+
+.track { display: flex; gap: clamp(1rem, 2.5vw, 2rem); width: max-content; padding-inline: var(--gutter); will-change: transform; }
+.panel { flex: 0 0 clamp(290px, 80vw, 880px); height: clamp(320px, 56svh, 520px); display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 28px; background: var(--surface); overflow: hidden; opacity: 0.4; transform: scale(0.96); transition: opacity 0.5s ease, transform 0.5s ease; }
+.panel.on { opacity: 1; transform: none; }
+.art { position: relative; display: grid; place-items: center; background: linear-gradient(150deg, rgb(52 211 153 / 0.35), rgb(255 93 108 / 0.25)); overflow: hidden; }
+.hand { position: absolute; inset: 0; padding: 10% 22% 18% 22%; opacity: 0.32; }
+.glyph { position: relative; font-size: clamp(3.5rem, 11vw, 8rem); font-weight: 700; letter-spacing: -0.05em; line-height: 1; }
+.glyph { white-space: nowrap; padding-right: 0.1em; }
+.glyph.long { font-size: clamp(2.2rem, 6.5vw, 4.4rem); }
+.art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.chip { position: absolute; left: 12px; bottom: 12px; right: 12px; width: fit-content; max-width: calc(100% - 24px); padding: 0.35rem 0.85rem; border-radius: 999px; background: var(--bg-soft); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid var(--line); font-size: 0.78rem; font-weight: 500; }
+.copy { display: flex; flex-direction: column; justify-content: center; gap: 0.7rem; padding: clamp(1.1rem, 3vw, 2.4rem); }
+.no { color: var(--ok); font-weight: 600; font-size: 0.85rem; }
+h3 { font-size: clamp(1.3rem, 2.8vw, 2rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.copy p { color: var(--muted); font-weight: 300; font-size: clamp(0.9rem, 1.5vw, 1.02rem); }
+.bar { margin-inline: var(--gutter); height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--signal); transform-origin: left; }
+
+@media (max-width: 700px) { .panel { grid-template-columns: 1fr; grid-template-rows: 36% 1fr; height: clamp(360px, 60svh, 520px); } .head .h2 { font-size: 1.6rem; } }
+@media (max-height: 560px) {
+  .pin { padding-top: 3.5rem; padding-bottom: 0.8rem; gap: 0.6rem; }
+  .head .lead { display: none; }
+  .head .h2 { font-size: 1.25rem; max-width: none; margin: 0; }
+  .arrow { width: 36px; height: 36px; }
+  .panel { height: auto; flex-basis: clamp(300px, 70vw, 720px); grid-template-columns: 1fr 1.5fr; grid-template-rows: none; align-self: stretch; }
+  .track { flex: 1; min-height: 0; }
+  .copy { gap: 0.35rem; padding: 0.8rem 1.1rem; }
+  .copy p { font-size: 0.82rem; line-height: 1.45; }
+  h3 { font-size: 1.1rem; }
+  .glyph { font-size: 3rem; }
+  .chip { display: none; }
+}
+
+/* Reduced motion: plain stacked cards, no scroll-linked movement */
+.static .pin { position: static; height: auto; overflow: visible; padding-block: 5rem; }
+.static .track { flex-direction: column; width: auto; padding-inline: var(--gutter); }
+.static .panel { flex-basis: auto; height: auto; min-height: 280px; }

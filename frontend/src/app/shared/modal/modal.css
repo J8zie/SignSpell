@@ -1,0 +1,12 @@
+dialog { width: min(520px, calc(100% - 1.5rem)); max-height: calc(100dvh - 2rem); overflow: auto; border: 1px solid var(--line); border-radius: 24px; background: var(--raised); color: var(--fg); padding: 1.5rem; box-shadow: var(--shadow); }
+dialog.wide { width: min(760px, calc(100% - 1.5rem)); }
+/* the backdrop fades in with CSS because GSAP cannot reach a ::backdrop */
+dialog::backdrop { background: var(--scrim); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+dialog[open]::backdrop { animation: backdrop-in 0.25s ease both; }
+@keyframes backdrop-in { from { opacity: 0; } }
+.head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; }
+.x { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: inherit; font-size: 1.4rem; line-height: 1; cursor: pointer; transition: border-color 0.2s; }
+.x { transition: border-color 0.2s, transform 0.35s var(--spring), background 0.2s; }
+.x:hover { border-color: var(--fg); transform: rotate(90deg); background: var(--surface-2); }
+@media (prefers-reduced-motion: reduce) { dialog[open]::backdrop { animation: none; } }

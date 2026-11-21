@@ -1,0 +1,82 @@
+<div class="page work" appReveal>
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Teacher</p>
+      <h1>Your learners</h1>
+      <!-- three numbers in one line, instead of three boxes -->
+      <p class="summary">
+        <b>{{ people().length }}</b> {{ people().length === 1 ? 'learner' : 'learners' }} <span class="dot">·</span>
+        <b>{{ attempts() }}</b> attempts <span class="dot">·</span>
+        <b>{{ accuracy() === null ? '–' : accuracy() + '%' }}</b> correct
+        @if (summary(); as s) { <span class="dot">·</span> <b>{{ s.signsDonated }}</b> {{ s.signsDonated === 1 ? 'sign' : 'signs' }} donated }
+      </p>
+    </div>
+    <button class="btn ghost sm" type="button" (click)="exportCsv()" [disabled]="!shown().length || exporting()">{{ exporting() ? 'Preparing…' : 'Export CSV' }}</button>
+  </header>
+
+  @if (loading()) {
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  } @else if (!rows().length) {
+    <div class="empty">
+      <p class="big">No learner has practiced your signs yet.</p>
+      <p class="muted">Learners appear here after they practice a sign you donated.</p>
+      <a class="btn sm" routerLink="/teacher/donate">Open the studio</a>
+    </div>
+  } @else {
+    <section class="when" aria-labelledby="when">
+      <h2 id="when">When learners practiced</h2>
+      <p class="muted small">Each dot is a day on which a learner last practiced one of your signs. Days without a dot had no activity.</p>
+      <app-date-timeline [items]="timeline()" [selected]="day()" allLabel="All time" ariaLabel="Days on which learners practiced" (selectedChange)="day.set($event)" />
+    </section>
+
+    <div class="cols">
+      <section class="people" aria-labelledby="ppl">
+        <div class="bar">
+          <h2 id="ppl">Learners</h2>
+          <input class="input search" type="search" placeholder="Search by name" aria-label="Search learners by name" [value]="name()" (input)="name.set($any($event.target).value)" autocomplete="off">
+          @if (filtered()) { <button class="btn ghost sm" type="button" (click)="clear()">Clear filters</button> }
+        </div>
+
+        @if (!people().length) {
+          <p class="muted">No learner matches these choices.</p>
+        } @else {
+          <ul class="list" appReveal>
+            @for (p of people(); track p.id) {
+              <li class="person">
+                <div class="top">
+                  <span class="avatar" aria-hidden="true">{{ p.initials }}</span>
+                  <div class="who">
+                    <b>{{ p.name }}</b>
+                    <span class="muted small">{{ p.attempts }} attempts · {{ p.accuracy }}% correct @if (p.last) { · last {{ p.last | date: 'MMM d, h:mm a' }} }</span>
+                  </div>
+                </div>
+                <div class="meter" aria-hidden="true"><i [style.width.%]="p.accuracy"></i></div>
+                <ul class="chips" aria-label="Signs practiced by {{ p.name }}">
+                  @for (r of p.rows; track r.signId) {
+                    <li>
+                      <button type="button" class="chip-sign" [class]="'chip-sign lv-' + r.masteryLevel" [class.on]="node() === r.signId" (click)="focusSign(r.signId)"
+                              [attr.aria-pressed]="node() === r.signId" [attr.aria-label]="r.signLabel + ', ' + r.masteryLevel + ', ' + (r.correctAvg * 100).toFixed(0) + ' percent'">
+                        <b>{{ r.signLabel }}</b><small>{{ (r.correctAvg * 100).toFixed(0) }}%</small>
+                      </button>
+                    </li>
+                  }
+                </ul>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="map" aria-labelledby="map">
+        <h2 id="map">How your signs connect</h2>
+        @if (hasStructure()) {
+          <p class="muted small">A word joins the letters it is spelled with. Colour shows how well learners know it.</p>
+          <app-sign-graph [nodes]="graph().nodes" [edges]="graph().edges" [selected]="node()" (selectedChange)="node.set($event)" />
+        } @else {
+          <p class="muted">Donate a word or a sentence in the studio to see how your signs connect to letters.</p>
+          <a class="btn ghost sm" routerLink="/teacher/donate">Open the studio</a>
+        }
+      </section>
+    </div>
+  }
+</div>

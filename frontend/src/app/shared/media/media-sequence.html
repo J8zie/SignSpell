@@ -1,0 +1,23 @@
+@if (pictures().length) {
+  <ol class="seq" #list aria-label="Picture sequence, from the first picture to the last">
+    @for (m of pictures(); track m.id; let i = $index; let last = $last) {
+      <li class="step" [class.is-start]="i === 0" [class.dragging]="dragId() === m.id" [class.over]="overId() === m.id && dragId() !== m.id">
+        <figure class="piece" [attr.draggable]="editable()" (dragstart)="dragStart($event, m)" (dragover)="dragOver($event, m)" (drop)="drop($event, m)" (dragend)="dragEnd()">
+          <span class="num" aria-hidden="true">{{ i + 1 }}</span>
+          <span class="role" [class]="'role ' + roleOf(i)">{{ roleLabel[roleOf(i)] }}</span>
+          <img [src]="m.previewUrl" [alt]="'Picture ' + (i + 1) + ' of ' + pictures().length + ': ' + m.name" draggable="false">
+          @if (editable()) {
+            <div class="tools">
+              <button type="button" class="t" (click)="move(m, -1)" [disabled]="i === 0" aria-label="Move this picture earlier">‹</button>
+              <button type="button" class="t" (click)="move(m, 1)" [disabled]="last" aria-label="Move this picture later">›</button>
+              @if (i > 0) { <button type="button" class="t txt" (click)="makeStart(m)">Make start</button> }
+              <button type="button" class="t del" (click)="remove(m)" [attr.aria-label]="'Remove picture ' + (i + 1)">×</button>
+            </div>
+          }
+        </figure>
+        @if (!last) { <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 12" width="26" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6h20M16 1l5 5-5 5" /></svg></span> }
+      </li>
+    }
+  </ol>
+  @if (editable() && pictures().length > 1) { <p class="help">Drag a picture to change the order, or use the arrow buttons. The learner sees the pictures from Start to Final.</p> }
+}

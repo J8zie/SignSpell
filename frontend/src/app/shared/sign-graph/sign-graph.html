@@ -1,0 +1,35 @@
+<div class="scroller">
+  <svg #svg class="graph" [attr.viewBox]="'0 0 ' + layout().width + ' ' + layout().height" [style.min-width.px]="layout().width" role="group" aria-label="How signs connect: words and sentences are joined to the letters and words they are made of">
+    <!-- the row names, so the three levels are easy to read -->
+    <text class="row-name" x="8" y="22">Sentences</text>
+    <text class="row-name" x="8" y="138">Words</text>
+    <text class="row-name" x="8" y="254">Letters</text>
+
+    @for (e of layout().edges; track e.from + e.to) {
+      <path class="sg-edge" pathLength="1" [attr.d]="e.d" [attr.data-from]="e.from" [attr.data-to]="e.to" />
+    }
+    @for (n of layout().nodes; track n.id) {
+      <g class="sg-node" [class]="'sg-node lv-' + (n.level ?? 'none') + ' k-' + n.kind" [class.chosen]="n.id === selected()" [attr.data-id]="n.id"
+         role="button" tabindex="0" [attr.aria-pressed]="n.id === selected()" [attr.aria-label]="n.label + ', ' + n.kind + (n.level ? ', ' + n.level : '')"
+         (click)="pick(n.id)" (keydown)="onKey($event, n.id)">
+        <rect class="shape" [attr.x]="n.x - n.w / 2" [attr.y]="n.y - n.h / 2" [attr.width]="n.w" [attr.height]="n.h" [attr.rx]="n.h / 2" />
+        <text class="name" [attr.x]="n.x" [attr.y]="n.y + 5" text-anchor="middle">{{ n.label }}</text>
+      </g>
+    }
+  </svg>
+</div>
+
+<!-- a short sentence for the chosen sign, announced to screen readers when it changes -->
+<p class="caption" aria-live="polite">
+  @if (chosen(); as c) {
+    <b>{{ c.label }}</b> <span class="muted">{{ c.kind }}</span>
+    @if (parts().length) { · made of {{ parts().join(', ') }} }
+    @if (usedIn().length) { · used in {{ usedIn().join(', ') }} }
+    @if (c.detail) { · {{ c.detail }} }
+  } @else {
+    Pick a sign to see what it is made of.
+  }
+</p>
+<ul class="legend" aria-label="Colour key">
+  <li><i class="lv-none"></i>Not practiced</li><li><i class="lv-new"></i>New</li><li><i class="lv-learning"></i>Learning</li><li><i class="lv-familiar"></i>Familiar</li><li><i class="lv-mastered"></i>Mastered</li>
+</ul>

@@ -1,0 +1,42 @@
+@if (showIntro) { <app-preloader (finished)="onReady()" /> }
+
+<header class="bar" [class.open]="menu()" [class.solid]="active() !== 'home'">
+  <nav id="chapters" class="links" aria-label="Sections">
+    @for (c of chapters; track c.id) {
+      <button type="button" [class.on]="active() === c.id" [attr.aria-current]="active() === c.id ? 'true' : null" (click)="go(c.id)">{{ c.label }}</button>
+    }
+  </nav>
+  <button class="icon menu-btn" type="button" (click)="menu.set(!menu())" aria-controls="chapters" [attr.aria-expanded]="menu()" aria-label="Sections menu">
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+      @if (menu()) { <path d="M6 6l12 12M18 6L6 18"/> } @else { <path d="M4 8h16M4 16h16"/> }
+    </svg>
+  </button>
+  <a class="brand" href="/" (click)="go('home'); $event.preventDefault()" aria-label="SignSpell, back to the start" [attr.tabindex]="active() === 'home' ? -1 : null"><app-wordmark size="sm" /></a>
+  <div class="actions">
+    <app-theme-toggle />
+    @if (auth.account()) {
+      <a class="btn sm" [routerLink]="auth.homePath()">Open app</a>
+    } @else {
+      <a class="btn ghost sm login" routerLink="/login">Log in</a>
+      <a class="btn sm" routerLink="/register">Get started</a>
+    }
+  </div>
+</header>
+
+<div class="root" #root [class.stacked]="stacked()">
+  <div class="pin" #pin (pointerdown)="onPointerDown($event)" (pointermove)="onPointerMove($event)" (pointerup)="onPointerEnd()" (pointercancel)="onPointerEnd()">
+    <div class="track" #track>
+      <app-hero-panel [play]="ready()" />
+      <app-puzzle-panel />
+      <app-about-panels />
+      <app-how-panels />
+      <app-footer-panel />
+    </div>
+    @if (!stacked()) {
+      <div class="hud" aria-hidden="true">
+        <span class="where"><b>{{ idx() }}</b> / 0{{ chapters.length }} <em>{{ activeLabel() }}</em></span>
+        <div class="meter"><i [style.transform]="'scaleX(' + progress() + ')'"></i></div>
+      </div>
+    }
+  </div>
+</div>

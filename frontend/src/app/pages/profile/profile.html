@@ -1,0 +1,60 @@
+<div class="page">
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Account</p>
+      <h1>Profile</h1>
+      <p>How you appear in SignSpell.</p>
+    </div>
+  </header>
+
+  <div class="layout" appReveal>
+    <!-- who you are: the photo and the things that cannot be edited here -->
+    <aside class="who card">
+      <app-avatar-picker [current]="auth.account()?.info?.profilePhotoUrl ?? null" [initials]="initials()" (picked)="photo.set($event)" />
+      <div class="names">
+        <h2>{{ name() }}</h2>
+        <span class="chip" [class.super]="auth.role() === 'super_admin'">{{ roleLabel() }}</span>
+      </div>
+      <dl class="facts">
+        <div><dt>Username</dt><dd>{{ auth.account()?.username }}</dd></div>
+        @if (auth.account()?.info?.createdAt; as c) { <div><dt>Member since</dt><dd>{{ c | date: 'MMM d, y' }}</dd></div> }
+      </dl>
+    </aside>
+
+    <!-- what you can change -->
+    <form class="details card" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <h2>Your details</h2>
+      @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+      <div class="two">
+        <div class="field"><label for="fn">First name</label><input id="fn" class="input" formControlName="firstName" autocomplete="given-name" [class.invalid]="err(form.controls.firstName)">@if (err(form.controls.firstName); as m) { <span class="err">{{ m }}</span> }</div>
+        <div class="field"><label for="ln">Last name</label><input id="ln" class="input" formControlName="lastName" autocomplete="family-name" [class.invalid]="err(form.controls.lastName)">@if (err(form.controls.lastName); as m) { <span class="err">{{ m }}</span> }</div>
+      </div>
+      <div class="field"><label for="em">Email</label><input id="em" class="input" type="email" formControlName="email" autocomplete="email" [class.invalid]="err(form.controls.email)">@if (err(form.controls.email); as m) { <span class="err">{{ m }}</span> }</div>
+
+      <div class="actions">
+        <span class="state" [class.on]="dirty()" aria-live="polite">{{ dirty() ? 'You have unsaved changes' : 'Everything is saved' }}</span>
+        @if (dirty()) { <button class="btn ghost" type="button" (click)="reset()">Discard</button> }
+        <button class="btn" type="submit" [disabled]="busy() || !dirty()">{{ busy() ? 'Saving…' : 'Save changes' }}</button>
+      </div>
+    </form>
+
+    <!-- a separate, small area: changing the password does not touch the details above -->
+    <section class="security card">
+      <div class="sec-top">
+        <div><h2>Password</h2><p class="muted small">Changing it signs you out on your other devices.</p></div>
+        <button class="btn ghost sm" type="button" (click)="pwOpen.set(!pwOpen())" [attr.aria-expanded]="pwOpen()">{{ pwOpen() ? 'Cancel' : 'Change password' }}</button>
+      </div>
+      @if (pwOpen()) {
+        <form class="pw" [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
+          @if (pwError()) { <div class="alert" role="alert">{{ pwError() }}</div> }
+          <div class="field"><label for="cp">Current password</label><input id="cp" class="input" type="password" formControlName="currentPassword" autocomplete="current-password" [class.invalid]="err(passwordForm.controls.currentPassword)">@if (err(passwordForm.controls.currentPassword); as m) { <span class="err">{{ m }}</span> }</div>
+          <div class="two">
+            <div class="field"><label for="np">New password</label><input id="np" class="input" type="password" formControlName="newPassword" autocomplete="new-password" [class.invalid]="err(passwordForm.controls.newPassword)">@if (err(passwordForm.controls.newPassword); as m) { <span class="err">{{ m }}</span> } @else { <span class="help">At least 8 characters.</span> }</div>
+            <div class="field"><label for="cn">Confirm new password</label><input id="cn" class="input" type="password" formControlName="confirm" autocomplete="new-password" [class.invalid]="passwordForm.touched && passwordForm.errors?.['mismatch']">@if (passwordForm.touched && passwordForm.errors?.['mismatch']) { <span class="err">The passwords do not match.</span> }</div>
+          </div>
+          <div class="actions"><button class="btn" type="submit" [disabled]="pwBusy()">{{ pwBusy() ? 'Changing…' : 'Change password' }}</button></div>
+        </form>
+      }
+    </section>
+  </div>
+</div>

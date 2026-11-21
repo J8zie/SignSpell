@@ -1,0 +1,13 @@
+:host { display: contents; }
+.brand { display: none; position: relative; padding: 2.5rem; border-right: 1px solid var(--line); background: var(--surface); flex-direction: column; justify-content: space-between; gap: 2rem; }
+@media (min-width: 900px) { .brand { display: flex; } }
+.logo { display: inline-flex; text-decoration: none; }
+.mid { display: grid; gap: 1.2rem; justify-items: start; }
+.frame { --state: var(--bad); position: relative; width: min(240px, 100%); aspect-ratio: 4 / 5; border-radius: 22px; border: 3px solid var(--state); background: var(--bg); padding: 8% 12% 16%; transition: border-color 0.5s, box-shadow 0.5s; box-shadow: 0 0 40px -14px var(--state); }
+.frame.ok { --state: var(--ok); }
+.frame app-hand { height: 100%; --hs: var(--state); }
+.tag { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.55rem; text-align: center; font-size: 0.85rem; font-weight: 600; color: var(--state); border-top: 1px solid var(--line); }
+h2 { font-size: clamp(1.7rem, 2.6vw, 2.5rem); font-weight: 600; letter-spacing: -0.04em; line-height: 1.12; }
+h2 .serif { font-size: 1.08em; color: var(--muted); }
+.mid p { color: var(--muted); max-width: 36ch; }
+.foot { color: var(--muted); }

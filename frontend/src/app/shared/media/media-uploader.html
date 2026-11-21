@@ -1,0 +1,24 @@
+<div class="drop" [class.drag]="dragging()" (dragover)="$event.preventDefault(); dragging.set(true)" (dragleave)="dragging.set(false)" (drop)="onDrop($event)">
+  <p class="lead"><b>Pictures</b> of the sign, in the order a learner should follow, and an optional <b>video</b>.</p>
+  <p class="small muted">Drop files here, or choose them. JPG, PNG or WebP up to 2 MB each. Video: MP4, WebM or MOV up to 25 MB.</p>
+  <div class="row">
+    <button type="button" class="btn ghost sm" (click)="pics.click()">Add pictures</button>
+    <button type="button" class="btn ghost sm" (click)="vid.click()">{{ video() ? 'Replace video' : 'Add video' }}</button>
+  </div>
+  <input #pics type="file" hidden multiple accept="image/jpeg,image/png,image/webp" (change)="onPick(pics)">
+  <input #vid type="file" hidden accept="video/mp4,video/webm,video/quicktime" (change)="onPick(vid)">
+</div>
+
+@if (problems().length) {
+  <ul class="problems" role="alert">@for (p of problems(); track p) { <li>{{ p }}</li> }</ul>
+}
+
+<app-media-sequence [items]="items()" (itemsChange)="itemsChange.emit($event)" (removed)="forget($event)" />
+
+@if (video(); as v) {
+  <div class="video">
+    <video [src]="v.url" controls preload="metadata" playsinline [attr.aria-label]="'Video: ' + v.name"></video>
+    <div class="vbar"><span class="small muted">Video · {{ v.name }}</span><button type="button" class="btn ghost sm" (click)="removeVideo()">Remove video</button></div>
+  </div>
+}
+@if (imageCount() === 0 && !video()) { <p class="help">Nothing added yet. The first picture you add becomes the START picture.</p> }

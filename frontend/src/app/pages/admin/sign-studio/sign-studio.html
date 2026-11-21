@@ -1,0 +1,82 @@
+<div class="page studio">
+  <header class="page-head">
+    <div>
+      <a class="back" routerLink="/admin/signs"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>All signs</a>
+      <h1>{{ editing() ? 'Edit sign' : 'Add a sign' }}</h1>
+      <p>Choose the sign, show how it is done, and leave a hint. Learners practice with it exactly as they do with a teacher's.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  } @else {
+    <div class="work" appReveal>
+      <!-- the three steps; the form id lets the Save button in the preview panel submit this form -->
+      <form id="admin-studio-form" class="steps" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+
+        <section class="step" [class.done]="done().content" aria-labelledby="s1">
+          <h2 id="s1"><span class="n" aria-hidden="true">01</span> Content</h2>
+          <div class="field">
+            <span class="lbl" id="tl">What kind of sign is it?</span>
+            <div class="seg" role="group" aria-labelledby="tl" appSlider>
+              @for (t of types; track t.id) {
+                <button type="button" [attr.aria-pressed]="signType() === t.id" (click)="setType(t.id)">{{ t.label }}</button>
+              }
+            </div>
+          </div>
+          <div class="field">
+            <label for="lb">{{ typeInfo().label }}</label>
+            <input id="lb" class="input" formControlName="label" autocapitalize="characters" spellcheck="false" autocomplete="off" [class.invalid]="err(form.controls.label)">
+            @if (err(form.controls.label); as m) { <span class="err">{{ m }}</span> } @else { <span class="help">{{ typeInfo().hint }}</span> }
+          </div>
+          <!-- the one thing only an admin chooses: who the sign is credited to -->
+          <div class="field">
+            <label for="ow">Donated by</label>
+            <select id="ow" class="input" formControlName="ownerId">
+              <option value="">SignSpell (no teacher)</option>
+              @for (t of teachers(); track t.userId) { <option [value]="t.userId">{{ name(t) }}</option> }
+            </select>
+            <span class="help">A teacher can follow how learners do on the signs credited to them.</span>
+          </div>
+        </section>
+
+        <section class="step" [class.done]="done().media" aria-labelledby="s2">
+          <h2 id="s2"><span class="n" aria-hidden="true">02</span> Media</h2>
+          @if (isLetter()) {
+            <app-image-picker label="Sign picture" [current]="existingUrl()" (picked)="onLetterPicked($event)" />
+          } @else {
+            <app-media-uploader [items]="media()" (itemsChange)="onMediaChange($event)" />
+          }
+          @if (imageError()) { <span class="err" role="alert">{{ imageError() }}</span> }
+        </section>
+
+        <section class="step" [class.done]="done().hint" aria-labelledby="s3">
+          <h2 id="s3"><span class="n" aria-hidden="true">03</span> Hint</h2>
+          <app-hint-editor fieldId="admin-hint" [showActions]="false" [hint]="hintDraft()" (draftChange)="hintDraft.set($event)" />
+        </section>
+      </form>
+
+      <!-- the preview: exactly what a learner will see, updating as you work -->
+      <aside class="preview" aria-label="Preview">
+        <p class="eyebrow">04 · What learners will see</p>
+        <div class="sign-name" [class.empty]="!previewLabel()">{{ previewLabel() || 'Your sign' }}</div>
+        @if (previewItems().length) {
+          <app-media-preview [items]="previewItems()" />
+        } @else {
+          <div class="blank">The pictures will appear here.</div>
+        }
+        @if (hintDraft().trim()) {
+          <div class="hint">
+            <app-hint-button [open]="hintOpen()" controls="admin-preview-hint" (toggle)="hintOpen.set(!hintOpen())" />
+            <app-hint-panel [text]="hintDraft().trim()" [open]="hintOpen()" panelId="admin-preview-hint" />
+          </div>
+        }
+        <div class="row">
+          <button class="btn grow" type="submit" form="admin-studio-form" [disabled]="busy()">{{ busy() ? 'Saving…' : (editing() ? 'Save changes' : 'Add this sign') }}</button>
+          <a class="btn ghost" routerLink="/admin/signs">Cancel</a>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

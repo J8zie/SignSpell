@@ -1,0 +1,2 @@
+.pre { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--bg); --stag: 22ms; --dur: 0.4s; transition: opacity 0.3s ease, transform 0.34s var(--ease); }
+.leaving { opacity: 0; transform: translateY(-2%); pointer-events: none; }

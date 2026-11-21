@@ -1,0 +1,20 @@
+:host { display: block; }
+.auth { min-height: 100vh; min-height: 100svh; display: grid; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .auth { grid-template-columns: minmax(340px, 5fr) 6fr; } }
+.side { position: relative; display: grid; place-items: center; padding: max(1.5rem, env(safe-area-inset-top, 0px)) 1.25rem 2.5rem; }
+.box { width: min(460px, 100%); display: grid; gap: 1.2rem; }
+.mlogo { display: inline-flex; text-decoration: none; justify-self: start; }
+@media (min-width: 900px) { .mlogo { display: none; } }
+h1 { font-size: 2.1rem; font-weight: 600; letter-spacing: -0.04em; line-height: 1.1; }
+form { display: grid; gap: 1rem; margin-top: 0.8rem; }
+.note { padding-top: 1rem; border-top: 1px solid var(--line); }
+.alt { color: var(--muted); font-size: 0.92rem; }
+.alt a { color: var(--fg); font-weight: 600; text-decoration-color: var(--line); text-underline-offset: 4px; }
+.alt a:hover { text-decoration-color: var(--accent); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+@media (max-width: 480px) { .two { grid-template-columns: 1fr; } }
+
+.corner { position: absolute; top: max(1rem, env(safe-area-inset-top, 0px)); right: 1.2rem; }
+.lead { color: var(--muted); margin-top: 0.6rem; max-width: 46ch; }
+.box { animation: rise 0.7s var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }

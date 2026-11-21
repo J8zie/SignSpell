@@ -1,0 +1,34 @@
+<section class="hero wrap" id="top" [class.go]="play()">
+  <div class="copy">
+    <h1>
+      @for (l of lines; track $index) {
+        <span class="line"><span class="inner g-text" [style.transitionDelay.ms]="$index * 140">{{ l }}</span></span>
+      }
+    </h1>
+    <p class="lead fade">
+      SignSpell watches your hand through the webcam and shows green for a correct sign and red for a wrong one.
+      Start with letters, then words, then simple sentences.
+    </p>
+    <div class="cta fade">
+      <a class="btn" routerLink="/register" appMagnetic>Start learning</a>
+      <a class="btn ghost" href="#guide" appMagnetic>Browse the letter guide</a>
+    </div>
+  </div>
+
+  <div class="demo fade" [class.ok]="state() === 'ok'" role="img"
+       aria-label="Demo: the frame turns red with a hint for a wrong hand sign and green for a correct one">
+    <span class="ref">Reference: B</span>
+    <app-hand class="skel" [state]="state()" />
+    <div class="fb">
+      <strong>{{ state() === 'ok' ? 'Correct. Hold steady.' : 'Wrong sign' }}</strong>
+      <span>{{ state() === 'ok' ? 'Confirmed after about one second.' : 'Keep your thumb across your palm and your fingers together.' }}</span>
+      <div class="hold"><i></i></div>
+    </div>
+  </div>
+
+  <p class="why fade">
+    About 70 million people are deaf and use more than 300 sign languages. In the Philippines, Republic Act 11106
+    made Filipino Sign Language the national sign language of the Filipino Deaf. Beginners who learn from charts
+    or videos still get no check on their hand shape. SignSpell is that check.
+  </p>
+</section>

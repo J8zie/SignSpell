@@ -1,0 +1,5 @@
+<div class="host" role="status" aria-live="polite">
+  @for (t of toast.items(); track t.id) {
+    <button type="button" class="toast" [class.ok]="t.kind === 'ok'" [class.bad]="t.kind === 'bad'" (click)="toast.dismiss(t.id)">{{ t.text }}</button>
+  }
+</div>

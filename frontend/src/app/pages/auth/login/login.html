@@ -1,0 +1,29 @@
+<section class="auth">
+  <app-auth-brand />
+  <div class="side">
+    <div class="corner"><app-theme-toggle /></div>
+    <div class="box">
+      <a class="mlogo" routerLink="/" aria-label="SignSpell home"><app-wordmark size="sm" /></a>
+      <div>
+        <p class="eyebrow">Welcome back</p>
+        <h1>Log in</h1>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+        <div class="field">
+          <label for="u">Username</label>
+          <input id="u" class="input" formControlName="username" autocomplete="username" autocapitalize="none" spellcheck="false" [class.invalid]="err(form.controls.username)">
+          @if (err(form.controls.username); as m) { <span class="err">{{ m }}</span> }
+        </div>
+        <div class="field">
+          <label for="p">Password</label>
+          <input id="p" class="input" formControlName="password" autocomplete="current-password" [type]="showPassword() ? 'text' : 'password'" [class.invalid]="err(form.controls.password)">
+          @if (err(form.controls.password); as m) { <span class="err">{{ m }}</span> }
+          <button type="button" class="link small" style="justify-self:start" (click)="showPassword.set(!showPassword())">{{ showPassword() ? 'Hide' : 'Show' }} password</button>
+        </div>
+        <button class="btn block" type="submit" [disabled]="busy()">{{ busy() ? 'Logging in…' : 'Log in' }}</button>
+      </form>
+      <p class="alt">New to SignSpell? <a routerLink="/register">Create an account</a></p>
+    </div>
+  </div>
+</section>

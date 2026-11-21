@@ -1,0 +1,33 @@
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: calc(0.7rem + env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px)) 0.7rem max(1.25rem, env(safe-area-inset-left, 0px));
+  background: var(--bg-soft); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.logo { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.15rem; letter-spacing: -0.02em; text-decoration: none; }
+.dots { position: relative; width: 26px; height: 18px; }
+.dots i { position: absolute; top: 0; width: 18px; height: 18px; border-radius: 50%; }
+.dots i:first-child { left: 0; background: var(--bad); }
+.dots i:last-child { right: 0; background: var(--ok); opacity: 0.92; }
+.links { display: flex; gap: clamp(1rem, 3vw, 2.2rem); }
+.links a { position: relative; text-decoration: none; font-size: 0.92rem; font-weight: 500; padding: 0.3rem 0; }
+.links a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--signal); transform: scaleX(0); transform-origin: left; transition: transform 0.35s ease; }
+@media (hover: hover) { .links a:hover::after { transform: scaleX(1); } }
+.actions { display: flex; gap: 0.5rem; }
+.icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: transparent; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: border-color 0.25s; }
+@media (hover: hover) { .icon:hover { border-color: var(--fg); } }
+.menu { display: none; }
+.actions { align-items: center; }
+@media (max-width: 520px) { .login { display: none; } }
+@media (max-height: 560px) {
+  .bar { padding-top: calc(0.3rem + env(safe-area-inset-top, 0px)); padding-bottom: 0.3rem; }
+  .icon { width: 36px; height: 36px; }
+}
+@media (max-width: 760px) {
+  .menu { display: grid; }
+  .links { position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0; padding: 0.5rem 1.25rem 1rem; background: var(--bg); border-bottom: 1px solid var(--line); display: none; }
+  .open .links { display: flex; }
+  .links a { padding: 0.9rem 0; font-size: 1.05rem; border-bottom: 1px solid var(--line); }
+  .links a::after { display: none; }
+}

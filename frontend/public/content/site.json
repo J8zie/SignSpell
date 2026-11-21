@@ -1,0 +1,25 @@
+{
+  "name": "SignSpell",
+  "school": "ACES Tagum College, Inc.",
+  "address": "Mankilam, Tagum City",
+  "course": "ITELEC 3, Bachelor of Science in Information Technology",
+  "period": "A.Y. 2026 to 2027",
+  "adviser": "Anfred Albit",
+  "team": [
+    "Jay Ampong",
+    "Jellian Jade I. Lobo",
+    "Louelyn Españo",
+    "Joriel Anne Igagamao",
+    "Khegie Cervantes"
+  ],
+  "goals": [
+    {
+      "code": "SDG 4",
+      "name": "Quality Education"
+    },
+    {
+      "code": "SDG 10",
+      "name": "Reduced Inequalities"
+    }
+  ]
+}

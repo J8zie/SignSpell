@@ -1,0 +1,62 @@
+<section class="auth">
+  <app-auth-brand />
+  <div class="side">
+    <div class="corner"><app-theme-toggle /></div>
+    <div class="box">
+      <a class="mlogo" routerLink="/" aria-label="SignSpell home"><app-wordmark size="sm" /></a>
+      <div>
+        <p class="eyebrow">Free for learners and teachers</p>
+        <h1>Create your account</h1>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
+
+        <div class="field">
+          <span class="lbl" id="role-l">I am a</span>
+          <div class="seg" role="group" aria-labelledby="role-l" appSlider>
+            <button type="button" [attr.aria-pressed]="form.controls.role.value === 'learner'" (click)="form.controls.role.setValue('learner')">Learner</button>
+            <button type="button" [attr.aria-pressed]="form.controls.role.value === 'teacher'" (click)="form.controls.role.setValue('teacher')">Teacher / donor</button>
+          </div>
+          <span class="help">{{ form.controls.role.value === 'learner' ? 'Practice letters, words and sentences with your webcam.' : 'Donate sign pictures and follow how learners do on them.' }}</span>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="fn">First name</label>
+            <input id="fn" class="input" formControlName="firstName" autocomplete="given-name" [class.invalid]="err(form.controls.firstName)">
+            @if (err(form.controls.firstName); as m) { <span class="err">{{ m }}</span> }
+          </div>
+          <div class="field">
+            <label for="ln">Last name</label>
+            <input id="ln" class="input" formControlName="lastName" autocomplete="family-name" [class.invalid]="err(form.controls.lastName)">
+            @if (err(form.controls.lastName); as m) { <span class="err">{{ m }}</span> }
+          </div>
+        </div>
+        <div class="field">
+          <label for="em">Email</label>
+          <input id="em" class="input" type="email" inputmode="email" formControlName="email" autocomplete="email" autocapitalize="none" [class.invalid]="err(form.controls.email)">
+          @if (err(form.controls.email); as m) { <span class="err">{{ m }}</span> }
+        </div>
+        <div class="field">
+          <label for="un">Username</label>
+          <input id="un" class="input" formControlName="username" autocomplete="username" autocapitalize="none" spellcheck="false" [class.invalid]="err(form.controls.username, { pattern: 'Use 3 to 20 letters, numbers, dots or underscores.' })">
+          @if (err(form.controls.username, { pattern: 'Use 3 to 20 letters, numbers, dots or underscores.' }); as m) { <span class="err">{{ m }}</span> }
+        </div>
+        <div class="two">
+          <div class="field">
+            <label for="pw">Password</label>
+            <input id="pw" class="input" type="password" formControlName="password" autocomplete="new-password" [class.invalid]="err(form.controls.password)">
+            @if (err(form.controls.password); as m) { <span class="err">{{ m }}</span> } @else { <span class="help">At least 8 characters.</span> }
+          </div>
+          <div class="field">
+            <label for="cf">Confirm password</label>
+            <input id="cf" class="input" type="password" formControlName="confirm" autocomplete="new-password" [class.invalid]="err(form.controls.confirm)">
+            @if (err(form.controls.confirm); as m) { <span class="err">{{ m }}</span> } @else if (form.hasError('mismatch') && form.controls.confirm.dirty) { <span class="err">The passwords do not match.</span> }
+          </div>
+        </div>
+        <button class="btn block" type="submit" [disabled]="busy()">{{ busy() ? 'Creating…' : 'Create account' }}</button>
+      </form>
+      <p class="alt">Already have an account? <a routerLink="/login">Log in</a></p>
+    </div>
+  </div>
+</section>

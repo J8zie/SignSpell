@@ -1,0 +1,25 @@
+<section class="lp hero" data-chapter="home" [class.go]="play()" style="--w: calc(100vw - 2 * var(--edge))">
+  <div class="inner">
+    <h1 class="mark"><app-wordmark size="xl" [play]="play()" /></h1>
+
+    <p class="tag fade" style="--d: 0.38s">
+      @for (w of hero.tagline; track w; let i = $index) {
+        <span class="u" [style.--u]="(0.55 + i * 0.12) + 's'">{{ w }}</span>
+      }
+    </p>
+
+    <p class="pill fade" [class.ok]="state() === 'ok'" style="--d: 0.5s" role="img" aria-label="Demo: red with a hint for a wrong sign, green for a correct sign">
+      <i aria-hidden="true"></i>
+      <span>{{ state() === 'ok' ? 'Correct. Hold steady.' : 'Wrong sign. Cross your thumb over your palm.' }}</span>
+    </p>
+
+    <p class="lead fade" style="--d: 0.6s">{{ hero.lead }}</p>
+
+    <div class="cta fade" style="--d: 0.7s">
+      <a class="btn" routerLink="/register" appMagnetic>Start learning</a>
+      <a class="btn ghost" routerLink="/login" appMagnetic>Log in</a>
+    </div>
+
+    <p class="hint fade" style="--d: 0.9s" aria-hidden="true">Scroll <span class="arrow"></span></p>
+  </div>
+</section>

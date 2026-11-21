@@ -1,0 +1,9 @@
+<button type="button" class="node" role="radio" [attr.aria-checked]="selected()" [tabindex]="selected() ? 0 : -1"
+        [class.selected]="selected()" [class.reached]="reached()" [class.first]="first()" [class.last]="last()" (click)="pick.emit()">
+  <span class="rail left" aria-hidden="true"></span>
+  <span class="rail right" aria-hidden="true"></span>
+  <span class="dot" aria-hidden="true"><i></i></span>
+  <span class="label">{{ item().label }}</span>
+  @if (item().detail) { <span class="detail">{{ item().detail }}</span> }
+  @if (item().count) { <span class="count" [attr.aria-label]="item().count + ' records'">{{ item().count }}</span> }
+</button>

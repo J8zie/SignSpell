@@ -1,0 +1,26 @@
+:host { display: block; min-width: 0; max-width: 100%; }
+/* a row of numbered steps joined by arrows; it scrolls sideways when there are too many to fit (phones) */
+.seq { display: flex; align-items: stretch; gap: 0; margin: 0; padding: 0.6rem 0.1rem 0.8rem; list-style: none; overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+.step { display: flex; align-items: center; flex: none; scroll-snap-align: start; }
+.arrow { display: grid; place-items: center; width: 34px; color: var(--muted); }
+
+.piece { position: relative; margin: 0; width: 132px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; cursor: grab; transition: border-color 0.2s, box-shadow 0.25s, transform 0.2s; }
+.is-start .piece { border-color: var(--fg); box-shadow: 0 0 0 3px color-mix(in srgb, var(--fg) 18%, transparent); }
+.piece:active { cursor: grabbing; }
+.dragging .piece { opacity: 0.45; transform: scale(0.96); }
+.over .piece { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
+img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--surface-2); }
+
+.num { position: absolute; top: 6px; left: 6px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--fg); color: var(--bg); font-size: 0.8rem; font-weight: 700; }
+.role { position: absolute; top: 8px; right: 6px; padding: 0.1rem 0.5rem; border-radius: 999px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.role.start, .role.only { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+/* the buttons under each picture; always visible, so touch screens can reorder without dragging */
+.tools { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; padding: 6px; border-top: 1px solid var(--line); }
+.t { min-width: 32px; min-height: 32px; padding: 0 0.4rem; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--fg); font: inherit; font-size: 1rem; line-height: 1; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.t.txt { font-size: 0.7rem; font-weight: 600; }
+.t:hover:not(:disabled) { border-color: var(--fg); }
+.t:disabled { opacity: 0.3; cursor: default; }
+.t.del:hover:not(:disabled) { background: var(--bad); border-color: var(--bad); color: var(--on-bad); }
+.help { font-size: 0.8rem; color: var(--muted); }
+@media (max-width: 520px) { .piece { width: 116px; } }

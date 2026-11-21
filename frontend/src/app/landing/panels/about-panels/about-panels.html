@@ -1,0 +1,31 @@
+<section class="lp what" data-chapter="about" style="--w: min(92vw, 920px)">
+  <div class="box">
+    <p class="eyebrow rv" style="--i: 0">About SignSpell</p>
+    <h2 class="rv g-text" style="--i: 1">{{ about.title }}</h2>
+    <p class="lead rv" style="--i: 2">{{ about.lead }}</p>
+    <ul class="facts">
+      @for (f of about.facts; track f.big; let i = $index) {
+        <li class="rv" [style.--i]="3 + i"><b>{{ f.big }}</b><span>{{ f.text }}</span></li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="lp who" style="--w: min(96vw, 1180px)">
+  <div class="box">
+    <h2 class="rv g-text" style="--i: 0">{{ roles.title }}</h2>
+    <ul class="cards rv" style="--i: 1">
+      @for (c of roles.cards; track c.id; let i = $index) {
+        <li class="card" tabindex="0" [class.active]="active() === i" (mouseenter)="active.set(i)" (focus)="active.set(i)" (click)="active.set(i)">
+          <img class="pic" [src]="'images/role-' + c.id + '.jpg'" alt="" loading="lazy" decoding="async" (error)="$any($event.target).style.display = 'none'">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="c.icon" /></svg>
+          <div class="body">
+            <span class="tag">{{ c.tag }}</span>
+            <h3>{{ c.title }}</h3>
+            <p>{{ c.text }}</p>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

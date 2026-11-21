@@ -1,0 +1,24 @@
+<section class="modes wrap" id="modes">
+  <h2 class="h2 g-text">{{ heading() }}</h2>
+  <p class="lead">{{ intro() }}</p>
+
+  <ul class="cards">
+    @for (m of modes; track m.id; let i = $index) {
+      <li class="card" tabindex="0" [class.active]="active() === i" [style.--tint]="m.tint"
+          (mouseenter)="active.set(i)" (focus)="active.set(i)" (click)="active.set(i)">
+        <div class="art">
+          <span class="glyph" aria-hidden="true">{{ m.glyph }}</span>
+          <img [src]="'images/' + m.img" alt="" loading="lazy" decoding="async" (error)="$any($event.target).style.display = 'none'">
+        </div>
+        <div class="body">
+          <h3>{{ m.title }}</h3>
+          <div class="detail">
+            <p>{{ m.text }}</p>
+            <span class="tag">{{ m.tag }}</span>
+            <a class="go" [routerLink]="links()[m.id]" [queryParams]="queries()[m.id]" (click)="$event.stopPropagation()">{{ cta() }} →</a>
+          </div>
+        </div>
+      </li>
+    }
+  </ul>
+</section>

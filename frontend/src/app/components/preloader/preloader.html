@@ -1,0 +1,18 @@
+@if (!hidden()) {
+  <div class="pre" [class.leaving]="leaving()" role="status" aria-live="polite" aria-label="Loading SignSpell">
+    <div class="half top"></div>
+    <div class="half bottom"></div>
+    <div class="stage">
+      <p class="status">{{ status() }}</p>
+      <ol class="tiles" aria-hidden="true">
+        @for (l of letters; track $index) {
+          <li class="tile" [attr.data-state]="stateOf($index)"><span>{{ l }}</span></li>
+        }
+      </ol>
+      <p class="count" aria-hidden="true">{{ count() }}<small>%</small></p>
+      @if (progress() < 100) {
+        <button class="skip" type="button" (click)="skip()">Skip intro</button>
+      }
+    </div>
+  </div>
+}

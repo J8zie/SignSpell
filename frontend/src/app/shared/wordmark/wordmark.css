@@ -1,0 +1,13 @@
+:host { display: inline-block; line-height: 1; }
+.wm { display: inline-flex; font-weight: 800; font-size: 1.05rem; letter-spacing: 0.1em; margin-right: -0.1em; user-select: none; }
+.xl { font-size: var(--wm-size, clamp(2.4rem, 14vw, 12rem)); letter-spacing: 0.045em; margin-right: -0.045em; }
+.l { display: inline-block; transition: transform 0.35s var(--ease); }
+.l:nth-child(1) { color: var(--c1); } .l:nth-child(2) { color: var(--c2); } .l:nth-child(3) { color: var(--c3); }
+.l:nth-child(4) { color: var(--c4); } .l:nth-child(5) { color: var(--c5); } .l:nth-child(6) { color: var(--c6); }
+.l:nth-child(7) { color: var(--c7); } .l:nth-child(8) { color: var(--c8); } .l:nth-child(9) { color: var(--c9); }
+@media (hover: hover) { .xl .l:hover { transform: translateY(-5%) rotate(-2deg); } }
+/* rise in, one letter after another (only the big wordmark waits for `play`) */
+.xl:not(.play) .l { opacity: 0; transform: translateY(0.35em); }
+.xl.play .l { animation: pop var(--dur, 0.55s) var(--ease) backwards; animation-delay: calc(var(--i) * var(--stag, 38ms)); }
+@keyframes pop { from { opacity: 0; transform: translateY(0.35em) scale(0.92); } }
+@media (prefers-reduced-motion: reduce) { .xl:not(.play) .l { opacity: 1; transform: none; } .xl.play .l { animation: none; } }

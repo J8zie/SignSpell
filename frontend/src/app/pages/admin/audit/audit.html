@@ -1,0 +1,71 @@
+<div class="page" appReveal>
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">Super admin</p>
+      <h1>Audit logs</h1>
+      <p class="summary">Every important action in the system · <b>{{ logs().length }}</b> shown · read-only</p>
+    </div>
+  </header>
+
+  <div class="tools">
+    <label class="sr" for="aq">Search audit logs</label>
+    <input id="aq" class="input search" type="search" placeholder="Search description or user" [value]="q()" (input)="search($any($event.target).value)" autocomplete="off">
+    <select class="input" aria-label="Filter by role" [value]="role()" (change)="role.set($any($event.target).value); apply()">
+      <option value="">All roles</option>
+      @for (r of roles; track r) { @if (r) { <option [value]="r">{{ roleLabel[r] }}</option> } }
+    </select>
+    <select class="input" aria-label="Filter by action" [value]="action()" (change)="action.set($any($event.target).value); apply()">
+      <option value="">All actions</option>
+      @for (a of actions; track a) { <option [value]="a">{{ a }}</option> }
+    </select>
+    <label class="sr" for="ar">Filter by resource</label>
+    <input id="ar" class="input" type="search" placeholder="Resource (e.g. user, sign)" [value]="resource()" (change)="resource.set($any($event.target).value); apply()" autocomplete="off">
+    <label class="sr" for="af">From date</label>
+    <input id="af" class="input" type="date" aria-label="From date" [value]="from()" (change)="from.set($any($event.target).value); apply()">
+    <label class="sr" for="at">To date</label>
+    <input id="at" class="input" type="date" aria-label="To date" [value]="to()" (change)="to.set($any($event.target).value); apply()">
+  </div>
+
+  @if (loading()) {
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  } @else if (!logs().length) {
+    <div class="empty"><p class="big">No audit entries match.</p><p>Try widening the filters.</p></div>
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th>When</th><th>User</th><th>Role</th><th>Action</th><th>Resource</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          @for (l of logs(); track l.auditId) {
+            <tr class="row" (click)="show(l)" tabindex="0" (keydown.enter)="show(l)">
+              <td class="nowrap">{{ l.createdAt | date: 'MMM d, y HH:mm' }}</td>
+              <td>{{ l.username ?? '—' }}</td>
+              <td>{{ l.userRole ? roleLabel[l.userRole] : '—' }}</td>
+              <td><span class="tag" [class.del]="l.action === 'DELETE'">{{ l.action }}</span></td>
+              <td>{{ l.resourceType ?? '—' }}@if (l.resourceId) { <span class="muted small"> #{{ l.resourceId }}</span> }</td>
+              <td class="desc">{{ l.description ?? '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<app-modal [open]="!!selected()" heading="Audit entry" (closed)="selected.set(null)">
+  @if (selected(); as l) {
+    <dl class="detail">
+      <dt>When</dt><dd>{{ l.createdAt | date: 'MMM d, y HH:mm:ss' }}</dd>
+      <dt>User</dt><dd>{{ l.username ?? '—' }}@if (l.userId) { <span class="muted small"> ({{ l.userId }})</span> }</dd>
+      <dt>Role</dt><dd>{{ l.userRole ? roleLabel[l.userRole] : '—' }}</dd>
+      <dt>Action</dt><dd>{{ l.action }}</dd>
+      <dt>Resource</dt><dd>{{ l.resourceType ?? '—' }}@if (l.resourceId) { <span class="muted small"> #{{ l.resourceId }}</span> }</dd>
+      <dt>Description</dt><dd>{{ l.description ?? '—' }}</dd>
+      <dt>IP address</dt><dd>{{ l.ipAddress ?? '—' }}</dd>
+      <dt>User agent</dt><dd class="ua">{{ l.userAgent ?? '—' }}</dd>
+      @if (l.oldValues) { <dt>Previous</dt><dd><pre>{{ l.oldValues | json }}</pre></dd> }
+      @if (l.newValues) { <dt>New</dt><dd><pre>{{ l.newValues | json }}</pre></dd> }
+    </dl>
+  }
+</app-modal>

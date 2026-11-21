@@ -1,0 +1,24 @@
+:host { display: block; }
+.back { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; font-weight: 550; color: var(--muted); text-decoration: none; transition: color 0.2s, transform 0.3s var(--ease); }
+.back:hover { color: var(--fg); transform: translateX(-3px); }
+
+/* two columns on wide screens: the steps, and a preview that stays in view while the admin scrolls */
+.work { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.4rem; align-items: start; }
+@media (min-width: 980px) { .work { grid-template-columns: minmax(0, 1fr) 360px; gap: 3.5rem; } .preview { position: sticky; top: calc(var(--bar-h) + 1.5rem); } }
+
+/* the steps hang off a thin line, like a path to follow */
+.steps { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; min-width: 0; }
+.step { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; min-width: 0; padding: 0 0 2.4rem 3.4rem; }
+.step::before { content: ''; position: absolute; left: 1.05rem; top: 2.2rem; bottom: 0.3rem; width: 1px; background: var(--line); }
+.step:last-child { padding-bottom: 0; } .step:last-child::before { display: none; }
+.step h2 { display: flex; align-items: center; margin: 0; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.03em; min-height: 2.1rem; }
+.n { position: absolute; left: 0; display: grid; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; color: var(--muted); transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease), transform 0.5s var(--spring); }
+.step.done .n { background: var(--fg); border-color: var(--fg); color: var(--bg); transform: scale(1.08); }
+
+.preview { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 0.9rem; padding: 1.3rem; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-sm); }
+.sign-name { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; overflow-wrap: anywhere; transition: color 0.3s; }
+.sign-name.empty { color: var(--muted); font-weight: 500; }
+.blank { display: grid; place-items: center; min-height: 150px; border: 1.5px dashed var(--line); border-radius: 16px; color: var(--muted); font-size: 0.9rem; text-align: center; padding: 1rem; }
+.hint { display: grid; gap: 0.5rem; }
+.row { flex-wrap: nowrap; }
+.grow { flex: 1; }

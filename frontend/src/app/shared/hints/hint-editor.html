@@ -1,0 +1,26 @@
+<div class="editor">
+  <label [attr.for]="fieldId()" class="lbl">Hint for learners <span class="muted">(optional)</span></label>
+  <textarea [id]="fieldId()" class="input" rows="3" [value]="draft()" [attr.maxlength]="maxLength()" (input)="onInput($any($event.target).value)"
+            placeholder="For example: keep your thumb across your palm, and your fingers together."></textarea>
+  <div class="meta">
+    <span class="small muted" [class.low]="left() < 20">{{ left() }} characters left</span>
+    <button type="button" class="link small" (click)="previewOpen.set(!previewOpen()); learnerOpen.set(false)" [attr.aria-expanded]="previewOpen()" [disabled]="!trimmed()">
+      {{ previewOpen() ? 'Hide preview' : 'Preview as learner' }}
+    </button>
+  </div>
+
+  @if (previewOpen() && trimmed()) {
+    <!-- exactly what a learner will see: a quiet button that reveals the hint -->
+    <div class="preview">
+      <app-hint-button [open]="learnerOpen()" [controls]="fieldId() + '-panel'" (toggle)="learnerOpen.set(!learnerOpen())" />
+      <app-hint-panel [text]="trimmed()" [open]="learnerOpen()" [panelId]="fieldId() + '-panel'" />
+    </div>
+  }
+
+  @if (showActions()) {
+    <div class="row">
+      <button type="button" class="btn sm" (click)="onSave()" [disabled]="!changed()">Save hint</button>
+      @if (hint()) { <button type="button" class="btn ghost sm" (click)="onRemove()">Remove hint</button> }
+    </div>
+  }
+</div>

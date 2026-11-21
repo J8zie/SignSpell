@@ -1,0 +1,7 @@
+<dialog #dlg [class.wide]="size() === 'wide'" [attr.aria-label]="heading()" (cancel)="$event.preventDefault(); closed.emit()" (click)="backdrop($event, dlg)">
+  <div class="head">
+    <h2>{{ heading() }}</h2>
+    <button type="button" class="x" aria-label="Close" (click)="closed.emit()">×</button>
+  </div>
+  <ng-content />
+</dialog>

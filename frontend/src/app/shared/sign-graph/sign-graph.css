@@ -1,0 +1,33 @@
+:host { display: block; }
+/* on a narrow screen the picture scrolls sideways instead of shrinking until the letters are unreadable */
+.scroller { overflow-x: auto; padding-bottom: 0.4rem; -webkit-overflow-scrolling: touch; }
+.graph { display: block; width: 100%; height: auto; overflow: visible; }
+.row-name { fill: var(--muted); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; }
+
+.sg-edge { fill: none; stroke: var(--fg); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1; opacity: 0.55; pointer-events: none; }
+
+.sg-node { cursor: pointer; outline: none; }
+.sg-node .shape { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; transition: stroke 0.25s, fill 0.25s; }
+.sg-node .name { fill: var(--fg); font-size: 14px; font-weight: 600; pointer-events: none; }
+.sg-node:hover .shape, .sg-node:focus-visible .shape { stroke: var(--fg); }
+.sg-node.chosen .shape { stroke: var(--fg); stroke-width: 3; }
+.sg-node:focus-visible .shape { stroke-width: 3; stroke-dasharray: 4 3; }
+
+/* colour = how well learners know the sign (the same meaning as the badges everywhere else) */
+.sg-node.lv-none .shape { stroke-dasharray: 3 3; }
+.sg-node.lv-new .shape { fill: var(--surface-2); }
+.sg-node.lv-learning .shape { fill: color-mix(in srgb, var(--bad) 30%, var(--bg)); stroke: var(--bad); }
+.sg-node.lv-familiar .shape { fill: color-mix(in srgb, var(--warn) 30%, var(--bg)); stroke: var(--warn); }
+.sg-node.lv-mastered .shape { fill: color-mix(in srgb, var(--ok) 30%, var(--bg)); stroke: var(--ok); }
+.sg-node.chosen .shape { stroke-dasharray: none; }
+
+.caption { margin-top: 0.7rem; font-size: 0.92rem; min-height: 1.4em; }
+.muted { color: var(--muted); margin-left: 0.2em; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin: 0.7rem 0 0; padding: 0; list-style: none; font-size: 0.75rem; color: var(--muted); }
+.legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.legend i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--line); }
+.legend i.lv-none { border-style: dashed; }
+.legend i.lv-new { background: var(--surface-2); }
+.legend i.lv-learning { background: color-mix(in srgb, var(--bad) 40%, transparent); border-color: var(--bad); }
+.legend i.lv-familiar { background: color-mix(in srgb, var(--warn) 40%, transparent); border-color: var(--warn); }
+.legend i.lv-mastered { background: color-mix(in srgb, var(--ok) 40%, transparent); border-color: var(--ok); }
