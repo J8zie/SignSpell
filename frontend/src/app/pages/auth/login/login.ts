@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthBrand } from '../../../shared/auth-brand/auth-brand';
 import { AuthService, HOME_BY_ROLE } from '../../../core/auth.service';
 import { errorOf } from '../../../core/util/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ThemeToggle } from '../../../shared/theme-toggle/theme-toggle';
 import { Wordmark } from '../../../shared/wordmark/wordmark';
 
@@ -19,6 +20,7 @@ import { Wordmark } from '../../../shared/wordmark/wordmark';
 export class Login {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly form = inject(NonNullableFormBuilder).group({
     username: ['', [Validators.required]],
     password: ['', [Validators.required]],
@@ -26,7 +28,14 @@ export class Login {
   readonly busy = signal(false);
   readonly error = signal('');
   readonly showPassword = signal(false);
+  readonly notice = signal('');
   readonly err = errorOf;
+
+  constructor() {
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((p) => {
+      if (p.get('registered') === '1') this.notice.set('Account created. Log in with your username and password.');
+    });
+  }
 
   // Logs in with the username and password, then navigates home.
   async submit(): Promise<void> {

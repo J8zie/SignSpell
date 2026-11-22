@@ -9,6 +9,7 @@
         <h1>Log in</h1>
       </div>
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (notice()) { <div class="alert ok" role="status">{{ notice() }}</div> }
         @if (error()) { <div class="alert" role="alert">{{ error() }}</div> }
         <div class="field">
           <label for="u">Username</label>

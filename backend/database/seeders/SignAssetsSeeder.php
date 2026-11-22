@@ -19,6 +19,8 @@ class SignAssetsSeeder extends Seeder
     /** File name (without extension) in seeders/data/images for each sign, keyed "type:label". */
     private const IMAGES = [
         'sentence:HOW ARE YOU' => 'sentence_how_are_you',
+        'word:HOW' => 'how_word',
+        'word:YOU' => 'you_word',
     ];
 
     /** Hint text per letter (keyed by label); words and the sentence get their own entries below. */

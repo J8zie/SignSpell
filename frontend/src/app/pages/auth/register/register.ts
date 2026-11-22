@@ -3,7 +3,7 @@ import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, Validatio
 import { Router, RouterLink } from '@angular/router';
 import { AuthBrand } from '../../../shared/auth-brand/auth-brand';
 import { ApiError } from '../../../core/api/api';
-import { AuthService, HOME_BY_ROLE } from '../../../core/auth.service';
+import { AuthService } from '../../../core/auth.service';
 import { applyServerErrors, errorOf } from '../../../core/util/forms';
 import { Slider } from '../../../shared/slider';
 import { ThemeToggle } from '../../../shared/theme-toggle/theme-toggle';
@@ -47,8 +47,9 @@ export class Register {
     try {
       const { confirm, ...input } = this.form.getRawValue();
       void confirm;
-      const me = await this.auth.register(input);
-      await this.router.navigateByUrl(HOME_BY_ROLE[me.role]);
+      await this.auth.register(input);
+      this.auth.clear();
+      await this.router.navigate(['/login'], { queryParams: { registered: '1' } });
     } catch (e) {
       if (e instanceof ApiError && Object.keys(e.fields).length) applyServerErrors(this.form, e.fields);
       this.error.set((e as Error).message || 'Could not create the account.');
